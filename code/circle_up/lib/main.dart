@@ -4,7 +4,9 @@ import 'firebase_options.dart';
 import 'views/auth_modal.dart';
 import 'package:circle_up/auth/auth_provider.dart';
 import 'views/sign_up.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 void main() async {
+  await dotenv.load(fileName: ".env");
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
