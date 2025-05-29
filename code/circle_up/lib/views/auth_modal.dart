@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:circle_up/components/enter_button.dart';
 import '../auth/auth_provider.dart';
 import '../auth/auth.dart';
+import 'package:provider/provider.dart';
 
 class AuthModal extends StatelessWidget {
   AuthModal({super.key});
@@ -41,10 +42,22 @@ class AuthModal extends StatelessWidget {
               SizedBox(height: 20),
               EnterButton(
                 onTap: () async {
-                  await AuthProvider().signIn(
+                  final AuthProvider authProvider = Provider.of<AuthProvider>(context, listen: false);
+                  await authProvider.signIn(
                     emailController.text,
                     passwordController.text,
                   );
+                  emailController.clear();
+                  passwordController.clear();
+                  bool authValid = await authProvider.isAuthenticated;
+                  if (authValid) {
+                    Navigator.pushNamed(context, '/photos');
+                  } else {
+                    // Show an error message or handle the error
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Login Failed')),
+                    );
+                  }
                 },
                 text: 'Login',
               ),

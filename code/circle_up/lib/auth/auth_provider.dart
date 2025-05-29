@@ -11,14 +11,14 @@ class AuthProvider extends ChangeNotifier {
 
   Future<void> signIn(String email, String password) async {
     await _auth.signIn(email, password);
-    _isAuthenticated = await _auth.isAuthenticated();
+    _isAuthenticated = true;
     // print("User Authenticated!");
     notifyListeners();
   }
 
   Future<void> signUp(String email, String password) async {
     await _auth.signUp(email, password);
-    _isAuthenticated = await _auth.isAuthenticated();
+    _isAuthenticated = true;
     notifyListeners();
   }
 
@@ -27,6 +27,10 @@ class AuthProvider extends ChangeNotifier {
     _isAuthenticated = await _auth.isAuthenticated();
     notifyListeners();
   }
-  
-  bool get isAuthenticated => _isAuthenticated; // Gets to check if the user is authenticated
+
+  Future<bool> get isAuthenticated async {
+    _isAuthenticated = await _auth.isAuthenticated();
+    notifyListeners();
+    return _isAuthenticated;
+  }
 }

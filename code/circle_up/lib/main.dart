@@ -1,17 +1,24 @@
+import 'package:circle_up/views/upload_photos.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 import 'views/auth_modal.dart';
 import 'package:circle_up/auth/auth_provider.dart';
 import 'views/sign_up.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'views/home_page.dart';
 void main() async {
   await dotenv.load(fileName: ".env");
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => AuthProvider(), 
+      child: const MyApp(),
+    ));
 }
 
 class MyApp extends StatelessWidget {
@@ -25,12 +32,13 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      initialRoute: '/login',
       routes: {
+        '/home': (context) => HomePage(),
         '/login': (context) => AuthModal(),
-        '/signUp': (context) => SignUp(), // Assuming the same modal is used for sign-up
+        '/signUp': (context) => SignUp(),
+        '/photos': (context) => UploadPhotos(),
       },
-      home: AuthModal(),
+      initialRoute: '/home',
     );
   }
 }
