@@ -3,6 +3,8 @@ import 'package:circle_up/components/text_field.dart';
 import 'package:circle_up/components/enter_button.dart';
 import 'package:circle_up/auth/auth_provider.dart';
 import 'package:provider/provider.dart';
+import '../services/alarm_circle_service.dart';
+import 'circle_page.dart';
 
 class NoGroupPage extends StatefulWidget {
   const NoGroupPage({super.key});
@@ -14,6 +16,8 @@ class NoGroupPage extends StatefulWidget {
 class _NoGroupPageState extends State<NoGroupPage> {
   TimeOfDay selectedTime = TimeOfDay.now();
   final TextEditingController circleCodeController = TextEditingController();
+  final AlarmCircleService _circleService = AlarmCircleService();
+  bool _isLoading = false;
 
   String _formatTimeOfDay(TimeOfDay time) {
     final hour = time.hourOfPeriod == 0 ? 12 : time.hourOfPeriod;
@@ -30,6 +34,80 @@ class _NoGroupPageState extends State<NoGroupPage> {
       setState(() {
         selectedTime = picked;
       });
+    }
+  }
+
+  Future<void> _createCircle() async {
+    setState(() => _isLoading = true);
+    try {
+      // Convert TimeOfDay to DateTime
+      final now = DateTime.now();
+      final alarmTime = DateTime(
+        now.year,
+        now.month,
+        now.day,
+        selectedTime.hour,
+        selectedTime.minute,
+      );
+
+      final circle = await _circleService.createCircle(alarmTime);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Circle created! Code: ${circle.code}'),
+            duration: const Duration(seconds: 5),
+          ),
+        );
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => CirclePage(circle: circle),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: ${e.toString()}')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  Future<void> _joinCircle() async {
+    if (circleCodeController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter a circle code')),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+    try {
+      final circle = await _circleService.joinCircle(circleCodeController.text);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Successfully joined circle!')),
+        );
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => CirclePage(circle: circle),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: ${e.toString()}')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
   }
 
@@ -87,7 +165,7 @@ class _NoGroupPageState extends State<NoGroupPage> {
                     ),
                     IconButton(
                       icon: const Icon(Icons.access_time),
-                      onPressed: () => _selectTime(context),
+                      onPressed: _isLoading ? null : () => _selectTime(context),
                     ),
                   ],
                 ),
@@ -104,10 +182,7 @@ class _NoGroupPageState extends State<NoGroupPage> {
               ),
               const SizedBox(height: 20),
               EnterButton(
-                onTap: () {
-                  // TODO: Implement create circle logic with selectedTime
-                  print('Creating new circle with time: ${_formatTimeOfDay(selectedTime)}');
-                },
+                onTap: _isLoading ? null : _createCircle,
                 text: 'Create New Circle',
               ),
               const SizedBox(height: 40),
@@ -128,12 +203,14 @@ class _NoGroupPageState extends State<NoGroupPage> {
               ),
               const SizedBox(height: 20),
               EnterButton(
-                onTap: () {
-                  // TODO: Implement join circle logic
-                  print('Joining circle with code: ${circleCodeController.text}');
-                },
+                onTap: _isLoading ? null : _joinCircle,
                 text: 'Join Circle',
               ),
+              if (_isLoading)
+                const Padding(
+                  padding: EdgeInsets.only(top: 20),
+                  child: Center(child: CircularProgressIndicator()),
+                ),
             ],
           ),
         ),
