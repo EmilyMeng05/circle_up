@@ -5,7 +5,7 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:path/path.dart';
-import 'package:circle_up/components/navbar.dart';
+import 'package:circle_up/photos/photo.dart';
 import 'package:circle_up/components/enter_button.dart';
 
 class UploadPhotos extends StatefulWidget {
@@ -16,45 +16,78 @@ class UploadPhotos extends StatefulWidget {
 }
 
 class _UploadPhotosState extends State<UploadPhotos> {
-  firebase_storage.FirebaseStorage storage =
+  final firebase_storage.FirebaseStorage storage =
       firebase_storage.FirebaseStorage.instance;
-  File? _photo;
   final ImagePicker _picker = ImagePicker();
+  File? _photo;
 
+  // Select a photo from the gallery
   Future<void> _selectPhoto() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-    setState(() {
-      if (pickedFile != null) {
-        _photo = File(pickedFile.path);
-      } else {
-        print('No image selected.');
-      }
-    });
+    if (pickedFile != null) {
+      setState(() => _photo = File(pickedFile.path));
+      // wait for user to confirm the upload
+      await _confirmAndUploadPhoto();
+    } else {
+      print('No image selected.');
+    }
   }
 
+  // Take a photo using the camera
   Future<void> _uploadFromCamera() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.camera);
-    setState(() {
-      if (pickedFile != null) {
-        _photo = File(pickedFile.path);
-      } else {
-        print('No image selected.');
-      }
-    });
+    if (pickedFile != null) {
+      setState(() => _photo = File(pickedFile.path));
+      /// wait for user to confirm
+      await _confirmAndUploadPhoto();
+    } else {
+      print('No image selected.');
+    }
   }
 
-  Future<void> _uploadPhoto() async {
-if (_photo == null) return;
-    final fileName = basename(_photo!.path);
-    final destination = 'files/$fileName';
+  // Confirm upload with user before proceeding
+  Future<void> _confirmAndUploadPhoto() async {
+    if (_photo == null) return;
 
-    try {
-      final ref = firebase_storage.FirebaseStorage.instance
-          .ref(destination)
-          .child('file/');
-      await ref.putFile(_photo!);
-    } catch (e) {
-      print(e);
+    final shouldUpload = await showDialog<bool>(
+      context: context as BuildContext,
+      builder: (context) => AlertDialog(
+        title: const Text('Confirm Upload'),
+        content: const Text('Do you want to upload this photo?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('No'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Yes'),
+          ),
+        ],
+      ),
+    );
+
+    if (shouldUpload == true) {
+      await _uploadPhoto();
+    }
+    ///if the user click no, we will just take them to the same page where they would
+    ///choose to upload photo from camera or select the photo
+  }
+
+  // Upload the photo to Firebase and show success/failure message
+  Future<void> _uploadPhoto() async {
+    if (_photo == null) return;
+
+    final result = await Photo.uploadPhoto(_photo);
+    if (result != null) {
+      ScaffoldMessenger.of(context as BuildContext).showSnackBar(
+        const SnackBar(content: Text('Photo uploaded successfully!')),
+      );
+      setState(() => _photo = null); // Clear selected photo
+    } else {
+      ScaffoldMessenger.of(context as BuildContext).showSnackBar(
+        const SnackBar(content: Text('Failed to upload photo.')),
+      );
     }
   }
 
@@ -75,21 +108,24 @@ if (_photo == null) return;
                     fit: BoxFit.cover,
                   ),
             const SizedBox(height: 20),
-            EnterButton(onTap: _selectPhoto, text: 'Select Photo from Gallery'),
+            EnterButton(
+              onTap: _selectPhoto,
+              text: 'Select Photo from Gallery',
+            ),
             const SizedBox(height: 20),
             EnterButton(
               onTap: _uploadFromCamera,
               text: 'Take Photo with Camera',
             ),
             const SizedBox(height: 20),
-            EnterButton(
-              onTap: _uploadPhoto,
-              text: 'Upload Photo',
-            ),
+            if (_photo != null)
+              EnterButton(
+                onTap: _confirmAndUploadPhoto,
+                text: 'Upload Selected Photo',
+              ),
           ],
         ),
       ),
-      // bottomNavigationBar: BottomNavigationBarExampleApp(),
     );
   }
 }

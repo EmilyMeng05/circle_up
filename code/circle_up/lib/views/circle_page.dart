@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../models/alarm_circle.dart';
 import '../services/alarm_circle_service.dart';
 import '../services/user_service.dart';
@@ -84,8 +85,11 @@ class CirclePage extends StatelessWidget {
                     ),
                     IconButton(
                       icon: const Icon(Icons.copy),
-                      onPressed: () {
-                        // TODO: Implement copy to clipboard
+                        onPressed: () {
+                        Clipboard.setData(ClipboardData(text: circle.code));
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Circle code copied to clipboard')),
+                        );
                       },
                     ),
                   ],
@@ -157,15 +161,19 @@ class CirclePage extends StatelessWidget {
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+                    children: [
                     Text(
                       '${circle.memberIds.length} members',
                       style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
                       ),
                     ),
-                    // TODO: Add member list with user details
+                    const SizedBox(height: 10),
+                    ...circle.memberIds.map((member) => ListTile(
+                        leading: const Icon(Icons.person),
+                        title: Text(member),
+                      )),
                   ],
                 ),
               ),
