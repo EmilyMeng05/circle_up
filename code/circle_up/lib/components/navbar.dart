@@ -1,54 +1,62 @@
+import 'package:circle_up/views/home_page.dart';
+import 'package:circle_up/views/upload_photos.dart';
+import 'package:circle_up/views/personal_alarm_page.dart';
 import 'package:flutter/material.dart';
 
-class ScaffoldWithNav extends StatefulWidget {
-  final int initialIndex;
-
-  const ScaffoldWithNav({super.key, this.initialIndex = 0});
+class BottomNavigationBarExampleApp extends StatelessWidget {
+  const BottomNavigationBarExampleApp({super.key});
 
   @override
-  State<ScaffoldWithNav> createState() => _ScaffoldWithNavState();
+  Widget build(BuildContext context) {
+    return const MaterialApp(home: BottomNavigationBarExample());
+  }
 }
 
-class _ScaffoldWithNavState extends State<ScaffoldWithNav> {
-  late int _currentIndex;
-
-  final List<String> _routes = [
-    '/alarm',
-    '/upload',
-    '/group',
-  ];
+class BottomNavigationBarExample extends StatefulWidget {
+  const BottomNavigationBarExample({super.key});
 
   @override
-  void initState() {
-    super.initState();
-    _currentIndex = widget.initialIndex;
-  }
+  State<BottomNavigationBarExample> createState() => _BottomNavigationBarExampleState();
+}
 
-  void _onTabTapped(int index) {
+class _BottomNavigationBarExampleState extends State<BottomNavigationBarExample> {
+  int _selectedIndex = 0;
+  static const TextStyle optionStyle = TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
+  static const List<Widget> _widgetOptions = <Widget>[
+    Text('Index 0: Home', style: optionStyle),
+    Text('Index 1: Business', style: optionStyle),
+    Text('Index 2: School', style: optionStyle),
+  ];
+
+  void _onItemTapped(int index) {
     setState(() {
-      _currentIndex = index;
+      _selectedIndex = index;
     });
-
-    // Navigate to the corresponding route
-    Navigator.pushNamedAndRemoveUntil(
-      context,
-      _routes[index],
-      (route) => false,
-    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: const SizedBox.shrink(),
+      body: (() {
+        switch (_selectedIndex) {
+          case 0:
+            return const PersonalAlarmPage();
+          case 1:
+            return UploadPhotos();
+          case 2:
+            return HomePage();
+        }
+      })(),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: _onTabTapped,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.alarm), label: 'Alarm'),
-          BottomNavigationBarItem(icon: Icon(Icons.camera), label: 'Photo'),
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(icon: Icon(Icons.alarm), label: 'Personal'),
+          BottomNavigationBarItem(icon: Icon(Icons.camera), label: 'Photos'),
           BottomNavigationBarItem(icon: Icon(Icons.group), label: 'Group'),
         ],
+        currentIndex: _selectedIndex,
+        backgroundColor: Colors.grey[300],
+        selectedItemColor: Colors.amber[800],
+        onTap: _onItemTapped,
       ),
     );
   }
