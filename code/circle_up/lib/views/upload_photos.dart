@@ -5,12 +5,14 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:path/path.dart';
-import 'package:circle_up/components/navbar.dart';
+// import 'package:circle_up/components/navbar.dart';
 import 'package:circle_up/components/enter_button.dart';
+
 
 class UploadPhotos extends StatefulWidget {
   const UploadPhotos({super.key});
-
+  // Get the current user's uid
+  // final String uid;
   @override
   _UploadPhotosState createState() => _UploadPhotosState();
 }

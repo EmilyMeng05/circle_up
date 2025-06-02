@@ -10,6 +10,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'services/alarm_circle_service.dart';
 import 'views/upload_photos.dart';
+import 'views/home_page.dart';
 
 void main() async {
   await dotenv.load(fileName: ".env");
@@ -33,8 +34,9 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         ),
-        initialRoute: '/login',
+        initialRoute: '/home',
         routes: {
+          '/home': (context) => const HomePage(),
           '/login': (context) => AuthModal(),
           '/signUp': (context) => SignUp(),
           '/noGroup': (context) => const NoGroupPage(),
