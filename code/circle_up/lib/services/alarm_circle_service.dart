@@ -75,7 +75,9 @@ class AlarmCircleService {
       'memberIds': FieldValue.arrayUnion([user.uid])
     });
 
-    return circle;
+    // Fetch the updated circle data
+    final updatedDoc = await doc.reference.get();
+    return AlarmCircle.fromFirestore(updatedDoc);
   }
 
   // Get user's active circles
