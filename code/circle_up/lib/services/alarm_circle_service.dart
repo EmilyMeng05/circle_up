@@ -1,11 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../models/alarm_circle.dart';
+import '../services/user_service.dart';
 import 'dart:math';
 
 class AlarmCircleService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final UserService _userService = UserService();
 
   // Generate a random 6-digit code
   String _generateCircleCode() {
@@ -17,6 +19,11 @@ class AlarmCircleService {
   Future<AlarmCircle> createCircle(DateTime alarmTime) async {
     final user = _auth.currentUser;
     if (user == null) throw Exception('User not authenticated');
+
+    // Check if user is already in a group
+    if (await _userService.isUserInGroup()) {
+      throw Exception('Already in a circle. Leave current circle first.');
+    }
 
     String code;
     bool codeExists;
@@ -41,6 +48,9 @@ class AlarmCircleService {
       'createdAt': FieldValue.serverTimestamp(),
     });
 
+    // Update user's group status
+    await _userService.joinGroup(code);
+
     // Get the created document
     final doc = await docRef.get();
     return AlarmCircle.fromFirestore(doc);
@@ -50,6 +60,11 @@ class AlarmCircleService {
   Future<AlarmCircle> joinCircle(String code) async {
     final user = _auth.currentUser;
     if (user == null) throw Exception('User not authenticated');
+
+    // Check if user is already in a group
+    if (await _userService.isUserInGroup()) {
+      throw Exception('Already in a circle. Leave current circle first.');
+    }
 
     // Find the circle with the given code
     final querySnapshot = await _firestore
@@ -74,6 +89,9 @@ class AlarmCircleService {
     await doc.reference.update({
       'memberIds': FieldValue.arrayUnion([user.uid])
     });
+
+    // Update user's group status
+    await _userService.joinGroup(code);
 
     // Fetch the updated circle data
     final updatedDoc = await doc.reference.get();
@@ -100,8 +118,12 @@ class AlarmCircleService {
     final user = _auth.currentUser;
     if (user == null) throw Exception('User not authenticated');
 
+    // Remove user from circle
     await _firestore.collection('alarmCircles').doc(circleId).update({
       'memberIds': FieldValue.arrayRemove([user.uid])
     });
+
+    // Update user's group status
+    await _userService.leaveGroup();
   }
 }

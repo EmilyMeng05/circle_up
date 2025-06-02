@@ -3,13 +3,47 @@ import 'package:flutter/material.dart';
 import 'package:circle_up/components/text_field.dart';
 import 'package:circle_up/components/enter_button.dart';
 import '../auth/auth_provider.dart';
-import '../auth/auth.dart';
 import 'package:provider/provider.dart';
+import 'package:circle_up/services/alarm_circle_service.dart';
+import 'package:circle_up/views/circle_page.dart';
 
 class SignUp extends StatelessWidget {
   SignUp({super.key});
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+
+  Future<void> _handleSignUp(BuildContext context) async {
+    final authProvider = context.read<AuthProvider>();
+    await authProvider.signUp(
+      emailController.text,
+      passwordController.text,
+    );
+
+    if (authProvider.isAuthenticated) {
+      if (authProvider.isInGroup) {
+        // Get the user's circle and navigate to CirclePage
+        final circles = await AlarmCircleService().getUserCircles().first;
+        if (circles.isNotEmpty) {
+          if (context.mounted) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => CirclePage(circle: circles.first),
+              ),
+            );
+          }
+        } else {
+          if (context.mounted) {
+            Navigator.pushReplacementNamed(context, '/noGroup');
+          }
+        }
+      } else {
+        if (context.mounted) {
+          Navigator.pushReplacementNamed(context, '/noGroup');
+        }
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,21 +72,13 @@ class SignUp extends StatelessWidget {
               ),
               SizedBox(height: 20),
               EnterButton(
-                onTap: () async {
-                  await context.read<AuthProvider>().signUp(
-                    emailController.text,
-                    passwordController.text,
-                  );
-                  if (await context.read<AuthProvider>().isAuthenticated) {
-                    Navigator.pushReplacementNamed(context, '/noGroup');
-                  }
-                },
+                onTap: () => _handleSignUp(context),
                 text: 'Sign Up',
               ),
               SizedBox(height: 20),
               GestureDetector(
                 onTap: () {
-                  Navigator.pushNamed(context, '/login');
+                  Navigator.pop(context);
                 },
                 child: Text(
                   'Already have an account? Sign In',

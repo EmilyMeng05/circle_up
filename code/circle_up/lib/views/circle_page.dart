@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import '../models/alarm_circle.dart';
 import '../services/alarm_circle_service.dart';
+import '../services/user_service.dart';
 
 class CirclePage extends StatelessWidget {
   final AlarmCircle circle;
   final AlarmCircleService _circleService = AlarmCircleService();
+  final UserService _userService = UserService();
 
   CirclePage({super.key, required this.circle});
 
@@ -17,8 +19,9 @@ class CirclePage extends StatelessWidget {
   Future<void> _leaveCircle(BuildContext context) async {
     try {
       await _circleService.leaveCircle(circle.id);
+      await _userService.leaveGroup();
       if (context.mounted) {
-        Navigator.of(context).pop(); // Return to previous page
+        Navigator.pushReplacementNamed(context, '/noGroup');
       }
     } catch (e) {
       if (context.mounted) {
@@ -37,6 +40,7 @@ class CirclePage extends StatelessWidget {
         title: const Text('Circle Details'),
         backgroundColor: Colors.grey[300],
         elevation: 0,
+        automaticallyImplyLeading: false,
       ),
       body: SafeArea(
         child: Padding(

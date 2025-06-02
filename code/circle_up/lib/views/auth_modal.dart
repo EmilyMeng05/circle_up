@@ -2,17 +2,51 @@
 
 // If the user is already signed-up, they can sign in
 // otherwise, they can sign up
-import 'package:circle_up/components/text_field.dart';
 import 'package:flutter/material.dart';
+import 'package:circle_up/components/text_field.dart';
 import 'package:circle_up/components/enter_button.dart';
-import '../auth/auth_provider.dart';
-import '../auth/auth.dart';
+import 'package:circle_up/auth/auth_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:circle_up/services/alarm_circle_service.dart';
+import 'package:circle_up/views/circle_page.dart';
 
 class AuthModal extends StatelessWidget {
   AuthModal({super.key});
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+
+  Future<void> _handleLogin(BuildContext context) async {
+    final authProvider = context.read<AuthProvider>();
+    await authProvider.signIn(
+      emailController.text,
+      passwordController.text,
+    );
+
+    if (authProvider.isAuthenticated) {
+      if (authProvider.isInGroup) {
+        // Get the user's circle and navigate to CirclePage
+        final circles = await AlarmCircleService().getUserCircles().first;
+        if (circles.isNotEmpty) {
+          if (context.mounted) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => CirclePage(circle: circles.first),
+              ),
+            );
+          }
+        } else {
+          if (context.mounted) {
+            Navigator.pushReplacementNamed(context, '/noGroup');
+          }
+        }
+      } else {
+        if (context.mounted) {
+          Navigator.pushReplacementNamed(context, '/noGroup');
+        }
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,15 +75,7 @@ class AuthModal extends StatelessWidget {
               ),
               SizedBox(height: 20),
               EnterButton(
-                onTap: () async {
-                  await context.read<AuthProvider>().signIn(
-                    emailController.text,
-                    passwordController.text,
-                  );
-                  if (await context.read<AuthProvider>().isAuthenticated) {
-                    Navigator.pushReplacementNamed(context, '/noGroup');
-                  }
-                },
+                onTap: () => _handleLogin(context),
                 text: 'Login',
               ),
               SizedBox(height: 20),

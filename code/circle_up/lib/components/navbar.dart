@@ -1,5 +1,6 @@
 import 'package:circle_up/views/home_page.dart';
 import 'package:circle_up/views/upload_photos.dart';
+import 'package:circle_up/views/personal_alarm_page.dart';
 import 'package:flutter/material.dart';
 
 class BottomNavigationBarExampleApp extends StatelessWidget {
@@ -36,11 +37,10 @@ class _BottomNavigationBarExampleState extends State<BottomNavigationBarExample>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
       body: (() {
         switch (_selectedIndex) {
           case 0:
-            return HomePage();
+            return const PersonalAlarmPage();
           case 1:
             return UploadPhotos();
           case 2:
@@ -49,7 +49,7 @@ class _BottomNavigationBarExampleState extends State<BottomNavigationBarExample>
       })(),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Icons.alarm), label: 'Alarms'),
+          BottomNavigationBarItem(icon: Icon(Icons.alarm), label: 'Personal'),
           BottomNavigationBarItem(icon: Icon(Icons.camera), label: 'Photos'),
           BottomNavigationBarItem(icon: Icon(Icons.group), label: 'Group'),
         ],

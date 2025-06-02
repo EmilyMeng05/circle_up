@@ -7,6 +7,9 @@ class AppUser {
   final String? photoUrl;
   final DateTime createdAt;
   final DateTime lastLoginAt;
+  final DateTime? personalAlarmTime;
+  final bool isInGroup;
+  final String? groupCode;
 
   AppUser({
     required this.id,
@@ -15,6 +18,9 @@ class AppUser {
     this.photoUrl,
     required this.createdAt,
     required this.lastLoginAt,
+    this.personalAlarmTime,
+    this.isInGroup = false,
+    this.groupCode,
   });
 
   // Convert AppUser to Map for Firestore
@@ -25,6 +31,9 @@ class AppUser {
       'photoUrl': photoUrl,
       'createdAt': Timestamp.fromDate(createdAt),
       'lastLoginAt': Timestamp.fromDate(lastLoginAt),
+      'personalAlarmTime': personalAlarmTime != null ? Timestamp.fromDate(personalAlarmTime!) : null,
+      'isInGroup': isInGroup,
+      'groupCode': groupCode,
     };
   }
 
@@ -38,6 +47,9 @@ class AppUser {
       photoUrl: data['photoUrl'],
       createdAt: (data['createdAt'] as Timestamp).toDate(),
       lastLoginAt: (data['lastLoginAt'] as Timestamp).toDate(),
+      personalAlarmTime: data['personalAlarmTime'] != null ? (data['personalAlarmTime'] as Timestamp).toDate() : null,
+      isInGroup: data['isInGroup'] ?? false,
+      groupCode: data['groupCode'],
     );
   }
 }

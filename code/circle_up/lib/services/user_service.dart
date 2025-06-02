@@ -43,6 +43,9 @@ class UserService {
         photoUrl: firebaseUser.photoURL,
         createdAt: user.createdAt,
         lastLoginAt: DateTime.now(),
+        personalAlarmTime: user.personalAlarmTime,
+        isInGroup: user.isInGroup,
+        groupCode: user.groupCode,
       );
     }
   }
@@ -80,5 +83,87 @@ class UserService {
     if (updates.isNotEmpty) {
       await _firestore.collection('users').doc(user.uid).update(updates);
     }
+  }
+
+  // Set personal alarm time
+  Future<void> setPersonalAlarmTime(DateTime alarmTime) async {
+    final user = _auth.currentUser;
+    if (user == null) throw Exception('User not authenticated');
+
+    await _firestore.collection('users').doc(user.uid).update({
+      'personalAlarmTime': Timestamp.fromDate(alarmTime),
+    });
+  }
+
+  // Get current user's personal alarm time
+  Future<DateTime?> getPersonalAlarmTime() async {
+    final user = _auth.currentUser;
+    if (user == null) throw Exception('User not authenticated');
+
+    final doc = await _firestore.collection('users').doc(user.uid).get();
+    if (!doc.exists) return null;
+
+    final data = doc.data() as Map<String, dynamic>;
+    return data['personalAlarmTime'] != null
+        ? (data['personalAlarmTime'] as Timestamp).toDate()
+        : null;
+  }
+
+  // Stream of current user's data including personal alarm time
+  Stream<AppUser?> getCurrentUserStream() {
+    final user = _auth.currentUser;
+    if (user == null) throw Exception('User not authenticated');
+
+    return _firestore
+        .collection('users')
+        .doc(user.uid)
+        .snapshots()
+        .map((doc) => doc.exists ? AppUser.fromFirestore(doc) : null);
+  }
+
+  // Join a group
+  Future<void> joinGroup(String groupCode) async {
+    final user = _auth.currentUser;
+    if (user == null) throw Exception('User not authenticated');
+
+    await _firestore.collection('users').doc(user.uid).update({
+      'isInGroup': true,
+      'groupCode': groupCode,
+    });
+  }
+
+  // Leave a group
+  Future<void> leaveGroup() async {
+    final user = _auth.currentUser;
+    if (user == null) throw Exception('User not authenticated');
+
+    await _firestore.collection('users').doc(user.uid).update({
+      'isInGroup': false,
+      'groupCode': null,
+    });
+  }
+
+  // Check if user is in a group
+  Future<bool> isUserInGroup() async {
+    final user = _auth.currentUser;
+    if (user == null) throw Exception('User not authenticated');
+
+    final doc = await _firestore.collection('users').doc(user.uid).get();
+    if (!doc.exists) return false;
+
+    final data = doc.data() as Map<String, dynamic>;
+    return data['isInGroup'] ?? false;
+  }
+
+  // Get user's current group code
+  Future<String?> getCurrentGroupCode() async {
+    final user = _auth.currentUser;
+    if (user == null) throw Exception('User not authenticated');
+
+    final doc = await _firestore.collection('users').doc(user.uid).get();
+    if (!doc.exists) return null;
+
+    final data = doc.data() as Map<String, dynamic>;
+    return data['groupCode'];
   }
 }
