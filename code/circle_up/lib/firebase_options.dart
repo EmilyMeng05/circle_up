@@ -30,6 +30,16 @@ class DefaultFirebaseOptions {
           projectId: dotenv.env['PROJECT_ID']!,
           storageBucket: dotenv.env['STORAGE_BUCKET'],
         );
+      case TargetPlatform.iOS:
+        return FirebaseOptions(
+          apiKey: dotenv.env['FIRE_BASE_IOS_API_KEY']!,
+          appId: dotenv.env['IOS_APP_ID']!,
+          messagingSenderId: dotenv.env['SENDER_ID']!,
+          projectId: dotenv.env['PROJECT_ID']!,
+          storageBucket: dotenv.env['STORAGE_BUCKET'],
+          iosClientId: dotenv.env['IOS_CLIENT_ID'],
+          iosBundleId: dotenv.env['IOS_BUNDLE_ID'],
+        );
       default:
         throw UnsupportedError('DefaultFirebaseOptions are not supported for this platform.');
     }
@@ -71,8 +81,8 @@ class DefaultFirebaseOptions {
 // ///   options: DefaultFirebaseOptions.currentPlatform,
 // /// );
 // /// ```
-// /// 
-// /// 
+// ///
+// ///
 // class DefaultFirebaseOptions {
 //   static FirebaseOptions get currentPlatform {
 //     if (kIsWeb) {
