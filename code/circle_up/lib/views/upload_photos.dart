@@ -27,7 +27,7 @@ class _UploadPhotosState extends State<UploadPhotos> {
       if (pickedFile != null) {
         _photo = File(pickedFile.path);
       } else {
-        print('No image selected.');
+        //print('No image selected.');
       }
     });
   }
@@ -38,7 +38,7 @@ class _UploadPhotosState extends State<UploadPhotos> {
       if (pickedFile != null) {
         _photo = File(pickedFile.path);
       } else {
-        print('No image selected.');
+        //print('No image selected.');
       }
     });
   }
@@ -54,14 +54,16 @@ if (_photo == null) return;
           .child('file/');
       await ref.putFile(_photo!);
     } catch (e) {
-      print(e);
+      //print(e);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Upload Photos')),
+      backgroundColor: Colors.grey[300],
+      appBar: AppBar(title: const Text('Upload Photos'), 
+      backgroundColor: Colors.grey[300],),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

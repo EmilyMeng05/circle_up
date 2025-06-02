@@ -3,11 +3,7 @@ import 'package:flutter/foundation.dart' show defaultTargetPlatform, kIsWeb, Tar
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 
-/**
- * If you want to add more platforms, add them here to the switch statement
- * - You will need to add the env variables in the .env file
- * - Also you need to handle the stuff via the CLI to generate the options
- */
+
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {

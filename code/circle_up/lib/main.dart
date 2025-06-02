@@ -9,6 +9,7 @@ import 'views/circle_page.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'services/alarm_circle_service.dart';
+import 'views/upload_photos.dart';
 
 void main() async {
   await dotenv.load(fileName: ".env");
@@ -28,6 +29,7 @@ class MyApp extends StatelessWidget {
       create: (context) => AuthProvider(),
       child: MaterialApp(
         title: 'Circle Up',
+        debugShowCheckedModeBanner: false,
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         ),
@@ -36,6 +38,7 @@ class MyApp extends StatelessWidget {
           '/login': (context) => AuthModal(),
           '/signUp': (context) => SignUp(),
           '/noGroup': (context) => const NoGroupPage(),
+          '/photo' : (context) => UploadPhotos(),
         },
         home: Consumer<AuthProvider>(
           builder: (context, authProvider, _) {
