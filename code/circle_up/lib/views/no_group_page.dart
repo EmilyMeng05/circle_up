@@ -4,8 +4,34 @@ import 'package:circle_up/components/enter_button.dart';
 import 'package:circle_up/auth/auth_provider.dart';
 import 'package:provider/provider.dart';
 
-class NoGroupPage extends StatelessWidget {
+class NoGroupPage extends StatefulWidget {
   const NoGroupPage({super.key});
+
+  @override
+  State<NoGroupPage> createState() => _NoGroupPageState();
+}
+
+class _NoGroupPageState extends State<NoGroupPage> {
+  TimeOfDay selectedTime = TimeOfDay.now();
+  final TextEditingController circleCodeController = TextEditingController();
+
+  String _formatTimeOfDay(TimeOfDay time) {
+    final hour = time.hourOfPeriod == 0 ? 12 : time.hourOfPeriod;
+    final period = time.period == DayPeriod.am ? 'AM' : 'PM';
+    return '${hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')} $period';
+  }
+
+  Future<void> _selectTime(BuildContext context) async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: selectedTime,
+    );
+    if (picked != null && picked != selectedTime) {
+      setState(() {
+        selectedTime = picked;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +52,48 @@ class NoGroupPage extends StatelessWidget {
               ),
               const SizedBox(height: 40),
 
+              // Alarm Time Section
+              const Text(
+                'Set Alarm Time',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 20),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.2),
+                      spreadRadius: 1,
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      _formatTimeOfDay(selectedTime),
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.access_time),
+                      onPressed: () => _selectTime(context),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 40),
+
               // Create New Circle Section
               const Text(
                 'Create New Circle',
@@ -37,8 +105,8 @@ class NoGroupPage extends StatelessWidget {
               const SizedBox(height: 20),
               EnterButton(
                 onTap: () {
-                  // TODO: Implement create circle logic
-                  print('Creating new circle');
+                  // TODO: Implement create circle logic with selectedTime
+                  print('Creating new circle with time: ${_formatTimeOfDay(selectedTime)}');
                 },
                 text: 'Create New Circle',
               ),
@@ -53,32 +121,16 @@ class NoGroupPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.2),
-                      spreadRadius: 1,
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: TextField(
-                  decoration: const InputDecoration(
-                    hintText: 'Enter Circle Code',
-                    border: InputBorder.none,
-                  ),
-                ),
+              CustomTextField(
+                controller: circleCodeController,
+                hintText: 'Enter Circle Code',
+                obscureText: false,
               ),
               const SizedBox(height: 20),
               EnterButton(
                 onTap: () {
                   // TODO: Implement join circle logic
-                  print('Joining circle');
+                  print('Joining circle with code: ${circleCodeController.text}');
                 },
                 text: 'Join Circle',
               ),
