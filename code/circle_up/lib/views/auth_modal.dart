@@ -42,21 +42,12 @@ class AuthModal extends StatelessWidget {
               SizedBox(height: 20),
               EnterButton(
                 onTap: () async {
-                  final AuthProvider authProvider = Provider.of<AuthProvider>(context, listen: false);
-                  await authProvider.signIn(
+                  await context.read<AuthProvider>().signIn(
                     emailController.text,
                     passwordController.text,
                   );
-                  emailController.clear();
-                  passwordController.clear();
-                  bool authValid = await authProvider.isAuthenticated;
-                  if (authValid) {
-                    Navigator.pushNamed(context, '/photos');
-                  } else {
-                    // Show an error message or handle the error
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Login Failed')),
-                    );
+                  if (await context.read<AuthProvider>().isAuthenticated) {
+                    Navigator.pushReplacementNamed(context, '/noGroup');
                   }
                 },
                 text: 'Login',
@@ -64,7 +55,6 @@ class AuthModal extends StatelessWidget {
               SizedBox(height: 20),
               GestureDetector(
                 onTap: () {
-                  // Navigate to the sign-up page
                   Navigator.pushNamed(context, '/signUp');
                 },
                 child: Text(

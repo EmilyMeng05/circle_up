@@ -2,10 +2,9 @@
 import 'package:flutter/material.dart';
 import 'package:circle_up/components/text_field.dart';
 import 'package:circle_up/components/enter_button.dart';
-import 'package:provider/provider.dart';
 import '../auth/auth_provider.dart';
 import '../auth/auth.dart';
-
+import 'package:provider/provider.dart';
 
 class SignUp extends StatelessWidget {
   SignUp({super.key});
@@ -40,22 +39,12 @@ class SignUp extends StatelessWidget {
               SizedBox(height: 20),
               EnterButton(
                 onTap: () async {
-                  final AuthProvider authProvider = Provider.of<AuthProvider>(context, listen: false);
-                  await authProvider.signUp(
+                  await context.read<AuthProvider>().signUp(
                     emailController.text,
                     passwordController.text,
                   );
-                  emailController.clear();
-                  passwordController.clear();
-                  // if isAuthenticated is true, navigate to the home page
-                  bool authValid = await authProvider.isAuthenticated;
-                  if (authValid) {
-                    Navigator.pushNamed(context, '/photos');
-                  } else {
-                    // Show an error message or handle the error
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Sign Up Failed')),
-                    );
+                  if (await context.read<AuthProvider>().isAuthenticated) {
+                    Navigator.pushReplacementNamed(context, '/noGroup');
                   }
                 },
                 text: 'Sign Up',
@@ -63,7 +52,6 @@ class SignUp extends StatelessWidget {
               SizedBox(height: 20),
               GestureDetector(
                 onTap: () {
-                  // Navigate to the sign-up page
                   Navigator.pushNamed(context, '/login');
                 },
                 child: Text(

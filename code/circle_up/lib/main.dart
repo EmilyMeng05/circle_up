@@ -1,44 +1,54 @@
-import 'package:circle_up/views/upload_photos.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 import 'views/auth_modal.dart';
 import 'package:circle_up/auth/auth_provider.dart';
 import 'views/sign_up.dart';
+import 'views/no_group_page.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'views/home_page.dart';
+import 'package:provider/provider.dart';
+
 void main() async {
   await dotenv.load(fileName: ".env");
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  runApp(
-    ChangeNotifierProvider(
-      create: (_) => AuthProvider(), 
-      child: const MyApp(),
-    ));
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+    return ChangeNotifierProvider(
+      create: (context) => AuthProvider(),
+      child: MaterialApp(
+        title: 'Circle Up',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        ),
+        initialRoute: '/login',
+        routes: {
+          '/login': (context) => AuthModal(),
+          '/signUp': (context) => SignUp(),
+          '/noGroup': (context) => const NoGroupPage(),
+        },
+        home: Consumer<AuthProvider>(
+          builder: (context, authProvider, _) {
+            return FutureBuilder<bool>(
+              future: authProvider.isAuthenticated,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                return snapshot.data == true ? const NoGroupPage() : AuthModal();
+              },
+            );
+          },
+        ),
       ),
-      routes: {
-        '/home': (context) => HomePage(),
-        '/login': (context) => AuthModal(),
-        '/signUp': (context) => SignUp(),
-        '/photos': (context) => UploadPhotos(),
-      },
-      initialRoute: '/home',
     );
   }
 }
