@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:circle_up/components/text_field.dart';
 import 'package:circle_up/components/enter_button.dart';
-// import 'package:circle_up/auth/auth_provider.dart';
-// import 'package:provider/provider.dart';
+import 'package:circle_up/auth/auth_provider.dart';
+import 'package:provider/provider.dart';
 import '../services/alarm_circle_service.dart';
 import 'circle_page.dart';
 
@@ -113,6 +113,7 @@ class _NoGroupPageState extends State<NoGroupPage> {
 
   @override
   Widget build(BuildContext context) {
+    final user = context.watch<AuthProvider>().user;
     return Scaffold(
       backgroundColor: Colors.grey[300],
       body: SafeArea(
@@ -121,9 +122,10 @@ class _NoGroupPageState extends State<NoGroupPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Welcome to Circle Up',
-                style: TextStyle(
+              /// added their username 
+              Text(
+                'Welcome to Circle Up, ${user?.displayName ?? 'User'}',
+                style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                 ),

@@ -60,7 +60,7 @@ class AuthModal extends StatelessWidget {
               SizedBox(height: 50),
               Icon(Icons.alarm, size: 100, color: Colors.black),
               SizedBox(height: 20),
-              Text('Welcome back to Circle Up, Please Sign in'),
+              Text('Welcome back to Circle Up, Please Log in'),
               SizedBox(height: 20),
               CustomTextField(
                 controller: emailController,

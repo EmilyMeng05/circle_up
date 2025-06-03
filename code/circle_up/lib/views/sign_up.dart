@@ -1,25 +1,43 @@
 // This will have the sign-up logic for the application
+
 import 'package:flutter/material.dart';
 import 'package:circle_up/components/text_field.dart';
 import 'package:circle_up/components/enter_button.dart';
-import '../auth/auth_provider.dart';
+import '../auth/auth_provider.dart' as local_auth;
 import 'package:provider/provider.dart';
 import 'package:circle_up/services/alarm_circle_service.dart';
 import 'package:circle_up/views/circle_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SignUp extends StatelessWidget {
   SignUp({super.key});
+
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
+  // collect user name 
+  final TextEditingController usernameController = TextEditingController();
+
+  // Handles the sign-up logic
   Future<void> _handleSignUp(BuildContext context) async {
-    final authProvider = context.read<AuthProvider>();
+    final authProvider = context.read<local_auth.AuthProvider>();
     await authProvider.signUp(
       emailController.text,
       passwordController.text,
+      usernameController.text,
     );
-
+    // after the user sign up, we ask their username and then store it in displayName
     if (authProvider.isAuthenticated) {
+      final uid = FirebaseAuth.instance.currentUser?.uid;
+      if (uid != null) {
+        await FirebaseFirestore.instance.collection('users').doc(uid).update({
+          'displayName': usernameController.text,
+        });
+      }
+      //update the user
+      await authProvider.refreshUser();
+      // Check if user is in a group and redirect accordingly
       if (authProvider.isInGroup) {
         // Get the user's circle and navigate to CirclePage
         final circles = await AlarmCircleService().getUserCircles().first;
@@ -54,34 +72,43 @@ class SignUp extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(height: 50),
-              Icon(Icons.alarm, size: 100, color: Colors.black),
-              SizedBox(height: 20),
-              Text('Welcome to Circle Up, Please Sign Up!'),
-              SizedBox(height: 20),
+              const SizedBox(height: 50),
+              const Icon(Icons.alarm, size: 100, color: Colors.black),
+              const SizedBox(height: 20),
+              const Text('Welcome to Circle Up, Please sign up'),
+              const SizedBox(height: 20),
+              // ask about their username
+              CustomTextField(
+                controller: usernameController,
+                hintText: 'Display Name',
+                obscureText: false,
+              ),
+              const SizedBox(height: 10),
               CustomTextField(
                 controller: emailController,
                 hintText: 'Email',
                 obscureText: false,
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               CustomTextField(
                 controller: passwordController,
                 hintText: 'Password',
                 obscureText: true,
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
+
               EnterButton(
                 onTap: () => _handleSignUp(context),
                 text: 'Sign Up',
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               GestureDetector(
                 onTap: () {
                   Navigator.pop(context);
+                  Navigator.pushNamed(context, '/login');
                 },
-                child: Text(
-                  'Already have an account? Sign In',
+                child: const Text(
+                  'Already have an account? Log In',
                   style: TextStyle(
                     color: Colors.black,
                     decoration: TextDecoration.underline,

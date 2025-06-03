@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 import 'services/alarm_circle_service.dart';
 import 'views/upload_photos.dart';
 import 'views/home_page.dart';
+import 'package:circle_up/views/photo_gallery.dart';
 
 void main() async {
   await dotenv.load(fileName: ".env");

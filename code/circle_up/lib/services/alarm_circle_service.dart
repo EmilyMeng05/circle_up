@@ -61,7 +61,6 @@ class AlarmCircleService {
     final user = _auth.currentUser;
     if (user == null) throw Exception('User not authenticated');
 
-    // Check if user is already in a group
     if (await _userService.isUserInGroup()) {
       throw Exception('Already in a circle. Leave current circle first.');
     }

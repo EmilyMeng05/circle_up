@@ -166,4 +166,14 @@ class UserService {
     final data = doc.data() as Map<String, dynamic>;
     return data['groupCode'];
   }
+
+  Future<AppUser?> getUser() async {
+    final user = _auth.currentUser;
+    if (user == null) return null;
+
+    final doc = await _firestore.collection('users').doc(user.uid).get();
+    if (!doc.exists) return null;
+
+    return AppUser.fromFirestore(doc);
+  }
 }
