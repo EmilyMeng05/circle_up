@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
 import '../models/alarm_circle.dart';
+import '../models/user.dart';
 import '../services/alarm_circle_service.dart';
 import '../services/user_service.dart';
 import 'upload_photos.dart';
@@ -19,6 +20,7 @@ class _CirclePageState extends State<CirclePage> {
   final AlarmCircleService _circleService = AlarmCircleService();
   final UserService _userService = UserService();
   late Timer _timer;
+  late Future<List<AppUser>> _membersFuture;
 
   /// Format alarm time for display
   String _formatDateTime(DateTime dateTime) {
@@ -67,6 +69,7 @@ class _CirclePageState extends State<CirclePage> {
   void initState() {
     super.initState();
     _startAlarmWatcher();
+    _membersFuture = _userService.getUsersByIds(widget.circle.memberIds);
   }
 
   @override
@@ -146,13 +149,28 @@ class _CirclePageState extends State<CirclePage> {
                   borderRadius: BorderRadius.circular(10),
                   boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.2), blurRadius: 4)],
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('${circle.memberIds.length} members', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
-                    const SizedBox(height: 10),
-                    ...circle.memberIds.map((member) => ListTile(leading: const Icon(Icons.person), title: Text(member))),
-                  ],
+                child: FutureBuilder<List<AppUser>>(
+                  future: _membersFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    if (snapshot.hasError) {
+                      return Text('Error loading members');
+                    }
+                    final members = snapshot.data ?? [];
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('${members.length} members', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                        const SizedBox(height: 10),
+                        ...members.map((user) => ListTile(
+                              leading: const Icon(Icons.person),
+                              title: Text(user?.displayName ?? user?.email ?? 'Unknown'),
+                            )),
+                      ],
+                    );
+                  },
                 ),
               ),
               const Spacer(),
