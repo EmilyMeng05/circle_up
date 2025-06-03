@@ -5,6 +5,7 @@ import 'package:circle_up/auth/auth_provider.dart';
 import 'package:provider/provider.dart';
 import '../services/alarm_circle_service.dart';
 import 'circle_page.dart';
+import '../views/alarm_page.dart';
 
 class NoGroupPage extends StatefulWidget {
   const NoGroupPage({super.key});
@@ -131,7 +132,6 @@ class _NoGroupPageState extends State<NoGroupPage> {
                 ),
               ),
               const SizedBox(height: 40),
-
               // Alarm Time Section
               const Text(
                 'Set Alarm Time',
@@ -173,7 +173,6 @@ class _NoGroupPageState extends State<NoGroupPage> {
                 ),
               ),
               const SizedBox(height: 40),
-
               // Create New Circle Section
               const Text(
                 'Create New Circle',
@@ -188,7 +187,6 @@ class _NoGroupPageState extends State<NoGroupPage> {
                 text: 'Create New Circle',
               ),
               const SizedBox(height: 40),
-
               // Join Circle Section
               const Text(
                 'Join Existing Circle',

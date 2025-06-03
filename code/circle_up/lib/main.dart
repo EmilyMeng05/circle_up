@@ -1,3 +1,4 @@
+import 'package:circle_up/views/upload_photos.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -36,6 +37,7 @@ class MyApp extends StatelessWidget {
           '/login': (context) => AuthModal(),
           '/signUp': (context) => SignUp(),
           '/noGroup': (context) => const NoGroupPage(),
+          '/uploadPhoto': (context) => const UploadPhotos(),
         },
         home: Consumer<AuthProvider>(
           builder: (context, authProvider, _) {
