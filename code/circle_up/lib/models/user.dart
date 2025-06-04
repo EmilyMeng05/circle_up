@@ -11,10 +11,12 @@ class AppUser {
   final DateTime? personalAlarmTime;
   final bool isInGroup;
   final String? groupCode;
-  /// uid for the user
   final uid = FirebaseAuth.instance.currentUser?.uid;
   final int numSuccess;
   final int numFailure;
+
+  static final FirebaseAuth _auth = FirebaseAuth.instance;
+  static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   AppUser({
     required this.id,
@@ -62,5 +64,29 @@ class AppUser {
       numSuccess: data['numSuccess'] ?? 0,
       numFailure: data['numFailure'] ?? 0,
     );
+  }
+
+  Future<void> incrementFailure() async {
+    final user = _auth.currentUser;
+    if (user == null) return;
+
+    final docRef = _firestore.collection('users').doc(user.uid);
+    await _firestore.runTransaction((transaction) async {
+      final snapshot = await transaction.get(docRef);
+      final current = snapshot.data()?['numFailure'] ?? 0;
+      transaction.update(docRef, {'numFailure': current + 1});
+    });
+  }
+
+  Future<void> incrementSuccess() async {
+    final user = _auth.currentUser;
+    if (user == null) return;
+
+    final docRef = _firestore.collection('users').doc(user.uid);
+    await _firestore.runTransaction((transaction) async {
+      final snapshot = await transaction.get(docRef);
+      final current = snapshot.data()?['numSuccess'] ?? 0;
+      transaction.update(docRef, {'numSuccess': current + 1});
+    });
   }
 }

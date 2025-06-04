@@ -176,4 +176,30 @@ class UserService {
 
     return AppUser.fromFirestore(doc);
   }
+
+  // increment success
+  Future<void> incrementSuccess() async {
+    final user = _auth.currentUser;
+    if (user == null) return;
+
+    final docRef = _firestore.collection('users').doc(user.uid);
+    await _firestore.runTransaction((transaction) async {
+      final snapshot = await transaction.get(docRef);
+      final current = snapshot.data()?['numSuccess'] ?? 0;
+      transaction.update(docRef, {'numSuccess': current + 1});
+    });
+  }
+
+  // increment failure
+  Future<void> incrementFailure() async {
+    final user = _auth.currentUser;
+    if (user == null) return;
+
+    final docRef = _firestore.collection('users').doc(user.uid);
+    await _firestore.runTransaction((transaction) async {
+      final snapshot = await transaction.get(docRef);
+      final current = snapshot.data()?['numFailure'] ?? 0;
+      transaction.update(docRef, {'numFailure': current + 1});
+    });
+  }
 }
