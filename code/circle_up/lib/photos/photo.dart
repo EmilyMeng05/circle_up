@@ -48,6 +48,33 @@ class Photo {
     }
   }
 
+
+  // Deletes a photo from Firebase Storage and removes its metadata from Firestore
+  static Future<void> deletePhoto(String downloadUrl) async {
+    try {
+      final uid = FirebaseAuth.instance.currentUser?.uid;
+      if (uid == null) throw Exception("User not authenticated");
+
+      // Delete the photo from Firebase Storage
+      final ref = firebase_storage.FirebaseStorage.instance.refFromURL(downloadUrl);
+      await ref.delete();
+
+      // Remove the metadata from Firestore
+      final snapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
+          .collection('photos')
+          .where('downloadUrl', isEqualTo: downloadUrl)
+          .get();
+
+      for (var doc in snapshot.docs) {
+        await doc.reference.delete();
+      }
+    } catch (e) {
+      print('Error deleting photo: $e');
+    }
+  }
+
   /// Retrieves all photo metadata for the current user
   static Future<List<Photo>> getUserPhotos() async {
     final uid = FirebaseAuth.instance.currentUser?.uid;

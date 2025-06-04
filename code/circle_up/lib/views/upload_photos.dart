@@ -12,6 +12,7 @@ class UploadPhotos extends StatefulWidget {
   const UploadPhotos({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _UploadPhotosState createState() => _UploadPhotosState();
 }
 
@@ -21,12 +22,18 @@ class _UploadPhotosState extends State<UploadPhotos> {
   final ImagePicker _picker = ImagePicker();
   File? _photo;
 
+  // For undo and redo functionality (Can Undo and Redo the choice of photos)
+  final List<File> _undoPhotos = [];
+  final List<File> _redoPhotos = [];
+
   // Select a photo from the gallery
   Future<void> _selectPhoto() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       setState(() => _photo = File(pickedFile.path));
       // wait for user to confirm the upload
+      // Add this to the undo stack
+      _undoPhotos.add(_photo!);
       //await _uploadPhoto();
     } else {
       print('No image selected.');
@@ -38,6 +45,7 @@ class _UploadPhotosState extends State<UploadPhotos> {
     final pickedFile = await _picker.pickImage(source: ImageSource.camera);
     if (pickedFile != null) {
       setState(() => _photo = File(pickedFile.path));
+
       /// wait for user to confirm
       //await _uploadPhoto();
     } else {
@@ -94,10 +102,47 @@ class _UploadPhotosState extends State<UploadPhotos> {
     }
   }
 
+  // Handle Redo and Undo actions
+  // undoPhoto() => Set the _photo to be null
+  // redoPhoto() => Set the _photo to be the last uploaded photo
+  void undoPhoto() {
+    if (_undoPhotos.isNotEmpty) {
+      setState(() {
+        final removedPhoto = _undoPhotos.removeLast();
+        _redoPhotos.add(removedPhoto);
+        _photo = _undoPhotos.isNotEmpty ? _undoPhotos.last : null;
+      });
+    }
+  }
+
+  void redoPhoto() {
+    if (_redoPhotos.isNotEmpty) {
+      setState(() {
+        final restoredPhoto = _redoPhotos.removeLast();
+        _undoPhotos.add(restoredPhoto);
+        _photo = restoredPhoto;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Upload Photos')),
+      appBar: AppBar(
+        title: const Text('Upload Photos'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.undo),
+            tooltip: 'Undo',
+            onPressed: undoPhoto,
+          ),
+          IconButton(
+            icon: const Icon(Icons.redo),
+            tooltip: 'Redo',
+            onPressed: redoPhoto,
+          ),
+        ],
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -105,16 +150,13 @@ class _UploadPhotosState extends State<UploadPhotos> {
             _photo == null
                 ? const Text('No image selected.')
                 : Image.file(
-                    _photo!,
-                    width: 200,
-                    height: 200,
-                    fit: BoxFit.cover,
-                  ),
+                  _photo!,
+                  width: 200,
+                  height: 200,
+                  fit: BoxFit.cover,
+                ),
             const SizedBox(height: 20),
-            EnterButton(
-              onTap: _selectPhoto,
-              text: 'Select Photo from Gallery',
-            ),
+            EnterButton(onTap: _selectPhoto, text: 'Select Photo from Gallery'),
             const SizedBox(height: 20),
             EnterButton(
               onTap: _uploadFromCamera,
@@ -122,10 +164,7 @@ class _UploadPhotosState extends State<UploadPhotos> {
             ),
             const SizedBox(height: 20),
             if (_photo != null)
-              EnterButton(
-                onTap: _uploadPhoto,
-                text: 'Upload Selected Photo',
-              ),
+              EnterButton(onTap: _uploadPhoto, text: 'Upload Selected Photo'),
           ],
         ),
       ),

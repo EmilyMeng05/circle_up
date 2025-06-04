@@ -5,16 +5,13 @@ import 'views/auth_modal.dart';
 import 'package:circle_up/auth/auth_provider.dart';
 import 'views/sign_up.dart';
 import 'views/no_group_page.dart';
-import 'views/circle_page.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
-import 'services/alarm_circle_service.dart';
 import 'views/upload_photos.dart';
-import 'views/home_page.dart';
-import 'package:circle_up/views/photo_gallery.dart';
 
 void main() async {
   await dotenv.load(fileName: ".env");
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -35,51 +32,13 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         ),
-        initialRoute: '/home',
+        initialRoute: '/login',
         routes: {
-          '/home': (context) => const HomePage(),
           '/login': (context) => AuthModal(),
           '/signUp': (context) => SignUp(),
           '/noGroup': (context) => const NoGroupPage(),
           '/photo' : (context) => UploadPhotos(),
         },
-        home: Consumer<AuthProvider>(
-          builder: (context, authProvider, _) {
-            return FutureBuilder<void>(
-              future: authProvider.checkAuthState(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                if (!authProvider.isAuthenticated) {
-                  return AuthModal();
-                }
-
-                // If authenticated, check group status
-                if (authProvider.isInGroup) {
-                  // Get the user's circle and navigate to CirclePage
-                  return FutureBuilder(
-                    future: AlarmCircleService().getUserCircles().first,
-                    builder: (context, circleSnapshot) {
-                      if (circleSnapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-
-                      if (!circleSnapshot.hasData || circleSnapshot.data!.isEmpty) {
-                        return const NoGroupPage();
-                      }
-
-                      return CirclePage(circle: circleSnapshot.data!.first);
-                    },
-                  );
-                }
-
-                return const NoGroupPage();
-              },
-            );
-          },
-        ),
       ),
     );
   }

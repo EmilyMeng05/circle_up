@@ -11,9 +11,10 @@ class Auth {
       );
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
-        //print('No user found for that email.');
+        rethrow;
       } else if (e.code == 'wrong-password') { 
         //print('Wrong password provided for that user.');
+        rethrow;
       }
     }
   }
@@ -27,8 +28,10 @@ class Auth {
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         //print('The password provided is too weak.');
+        rethrow;
       } else if (e.code == 'email-already-in-use') {
         //print('The account already exists for that email.');
+        rethrow;
       }
     } catch (e) {
       //print(e);

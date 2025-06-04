@@ -17,10 +17,7 @@ class AuthModal extends StatelessWidget {
 
   Future<void> _handleLogin(BuildContext context) async {
     final authProvider = context.read<AuthProvider>();
-    await authProvider.signIn(
-      emailController.text,
-      passwordController.text,
-    );
+    await authProvider.signIn(emailController.text, passwordController.text);
 
     if (authProvider.isAuthenticated) {
       if (authProvider.isInGroup) {
@@ -75,7 +72,17 @@ class AuthModal extends StatelessWidget {
               ),
               SizedBox(height: 20),
               EnterButton(
-                onTap: () => _handleLogin(context),
+                onTap: () async {
+                  try {
+                    await _handleLogin(context);
+                  } catch (e) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Login failed: $e')),
+                      );
+                    }
+                  }
+                },
                 text: 'Login',
               ),
               SizedBox(height: 20),

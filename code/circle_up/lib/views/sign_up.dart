@@ -16,7 +16,7 @@ class SignUp extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  // collect user name 
+  // collect user name
   final TextEditingController usernameController = TextEditingController();
 
   // Handles the sign-up logic
@@ -98,7 +98,17 @@ class SignUp extends StatelessWidget {
               const SizedBox(height: 20),
 
               EnterButton(
-                onTap: () => _handleSignUp(context),
+                onTap: () async {
+                  try {
+                    await _handleSignUp(context);
+                  } catch (e) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Error signing up: $e')),
+                      );
+                    }
+                  }
+                },
                 text: 'Sign Up',
               ),
               const SizedBox(height: 20),

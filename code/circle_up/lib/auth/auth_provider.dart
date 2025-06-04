@@ -23,6 +23,7 @@ class AuthProvider extends ChangeNotifier {
   Future<void> signIn(String email, String password) async {
     try {
       await _auth.signIn(email, password); // Sign in with Firebase Auth
+      //print("user signed in");
       _isAuthenticated = true;
       await FirebaseAuth.instance.currentUser?.reload();
       final refreshedUser = FirebaseAuth.instance.currentUser;
