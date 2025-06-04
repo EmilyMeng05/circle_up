@@ -102,9 +102,7 @@ class _UploadPhotosState extends State<UploadPhotos> {
     }
   }
 
-  // Handle Redo and Undo actions
-  // undoPhoto() => Set the _photo to be null
-  // redoPhoto() => Set the _photo to be the last uploaded photo
+
   void undoPhoto() {
     if (_undoPhotos.isNotEmpty) {
       setState(() {
