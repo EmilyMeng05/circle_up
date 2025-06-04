@@ -5,6 +5,7 @@ import 'package:circle_up/auth/auth_provider.dart';
 import 'package:provider/provider.dart';
 import '../services/alarm_circle_service.dart';
 import 'circle_page.dart';
+import '../services/notification_service.dart';
 
 class NoGroupPage extends StatefulWidget {
   const NoGroupPage({super.key});
@@ -58,6 +59,16 @@ class _NoGroupPageState extends State<NoGroupPage> {
             duration: const Duration(seconds: 5),
           ),
         );
+        // TODO: Insert a notification for the user @ circle.alarmTime => Should be a call made
+
+        NotificationService().scheduleNotification(
+          id: circle.hashCode,
+          title: 'Circle Up Alarm',
+          body: 'Your circle alarm is set for ${_formatTimeOfDay(selectedTime)}',
+          hour: selectedTime.hour,
+          minute: selectedTime.minute,
+        );
+
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
             builder: (context) => CirclePage(circle: circle),
@@ -92,6 +103,15 @@ class _NoGroupPageState extends State<NoGroupPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Successfully joined circle!')),
         );
+        // TODO: Insert a notification for the user @ circle.alarmTime => Should be a call made
+        NotificationService().scheduleNotification(
+          id: circle.hashCode,
+          title: 'Circle Up Alarm',
+          body: 'You have joined a circle with alarm set for ${_formatTimeOfDay(selectedTime)}',
+          hour: selectedTime.hour,
+          minute: selectedTime.minute,
+        );
+
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
             builder: (context) => CirclePage(circle: circle),

@@ -1,78 +1,96 @@
+import 'package:flutter/rendering.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
+import 'package:flutter_timezone/flutter_timezone.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class NotificationService {
-  static final NotificationService _instance = NotificationService._();
-  factory NotificationService() => _instance;
-  NotificationService._();
+  final notifPlugin = FlutterLocalNotificationsPlugin();
 
-  final FlutterLocalNotificationsPlugin _notifications = FlutterLocalNotificationsPlugin();
+  bool _isInitialized = false;
+  bool get isInitialized => _isInitialized;
 
-  Future<void> initialize() async {
+  // init
+  Future<void> initNotification() async {
+    if (_isInitialized) return;
+
+    const initAndroidSettings = AndroidInitializationSettings(
+      'mipmap/ic_launcher',
+    );
+
+    // Initialize timezone
     tz.initializeTimeZones();
+    final String currentTimeZone = await FlutterTimezone.getLocalTimezone();
+    tz.setLocalLocation(tz.getLocation(currentTimeZone));
 
-    const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
-    const iosSettings = DarwinInitializationSettings(
-      requestAlertPermission: true,
-      requestBadgePermission: true,
-      requestSoundPermission: true,
-    );
+    const initSettings = InitializationSettings(android: initAndroidSettings);
 
-    const initSettings = InitializationSettings(
-      android: androidSettings,
-      iOS: iosSettings,
-    );
-
-    await _notifications.initialize(initSettings);
+    await notifPlugin.initialize(initSettings);
   }
 
-  Future<void> scheduleAlarm({
-    required String circleId,
-    required String circleCode,
-    required DateTime alarmTime,
+  NotificationDetails notificationDetails() {
+    return const NotificationDetails(
+      android: AndroidNotificationDetails(
+        'daily_alarm_channel',
+        'Daily Alarm Notifications',
+        channelDescription: 'Daily alarm notifications for Circle Up',
+        importance: Importance.max,
+        priority: Priority.high,
+      ),
+    );
+  }
+
+  Future<void> showNotification({
+    int id = 0,
+    String? title,
+    String? body,
+    String? payload,
   }) async {
-    // Cancel any existing alarm for this circle
-    await cancelAlarm(circleId);
-
-    // Create notification details
-    const androidDetails = AndroidNotificationDetails(
-      'circle_alarms',
-      'Circle Alarms',
-      channelDescription: 'Notifications for circle alarms',
-      importance: Importance.high,
-      priority: Priority.high,
-      sound: RawResourceAndroidNotificationSound('alarm'),
-      playSound: true,
-      enableVibration: true,
-    );
-
-    const iosDetails = DarwinNotificationDetails(
-      sound: 'alarm.wav',
-      presentAlert: true,
-      presentBadge: true,
-      presentSound: true,
-    );
-
-    const details = NotificationDetails(
-      android: androidDetails,
-      iOS: iosDetails,
-    );
-
-    // Schedule the notification
-    await _notifications.zonedSchedule(
-      circleId.hashCode, // Use circle ID as notification ID
-      'Circle Up Alarm',
-      'Time to wake up with your circle! Code: $circleCode',
-      tz.TZDateTime.from(alarmTime, tz.local),
-      details,
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      //uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
-      matchDateTimeComponents: DateTimeComponents.time,
-    );
+    return notifPlugin.show(id, title, body, notificationDetails());
   }
 
-  Future<void> cancelAlarm(String circleId) async {
-    await _notifications.cancel(circleId.hashCode);
+  Future<void> scheduleNotification({
+    int id = 1,
+    required String title,
+    required String body,
+    required int hour,
+    required int minute,
+  }) async {
+    final now = tz.TZDateTime.now(tz.local);
+
+    // get the minute and hour from the scheduled time
+
+    // final scheduledHour = scheduledTime.hour;
+    // final scheduledMinute = scheduledTime.minute;
+
+    var scheduledDateTime = tz.TZDateTime(
+      tz.local,
+      now.year,
+      now.month,
+      now.day,
+      hour,
+      minute,
+    );
+
+    await notifPlugin.zonedSchedule(
+      id,
+      title,
+      body,
+      scheduledDateTime,
+      notificationDetails(),
+      androidScheduleMode: AndroidScheduleMode.alarmClock
+    );
+    print('Scheduled notification for $scheduledDateTime');
+  }
+
+  Future<void> requestNotificationPermission() async {
+    final status = await Permission.notification.status;
+    if (!status.isGranted) {
+      final result = await Permission.notification.request();
+      if (result != PermissionStatus.granted) {
+        print("Notification permission not granted");
+      }
+    }
   }
 }

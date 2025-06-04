@@ -8,6 +8,8 @@ import 'views/no_group_page.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'views/upload_photos.dart';
+import 'services/notification_service.dart';
+
 
 void main() async {
   await dotenv.load(fileName: ".env");
@@ -16,6 +18,8 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  await NotificationService().initNotification();
+  await NotificationService().requestNotificationPermission();
   runApp(const MyApp());
 }
 
