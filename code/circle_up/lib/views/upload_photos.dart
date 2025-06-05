@@ -46,7 +46,8 @@ class _UploadPhotosState extends State<UploadPhotos> {
     if (pickedFile != null) {
       setState(() => _photo = File(pickedFile.path));
 
-      /// wait for user to confirm
+      /// wait for user to confirm 
+      _undoPhotos.add(_photo!);
       //await _uploadPhoto();
     } else {
       print('No image selected.');
