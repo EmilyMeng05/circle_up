@@ -48,7 +48,6 @@ class _UploadPhotosState extends State<UploadPhotos> {
 
       /// wait for user to confirm 
       _undoPhotos.add(_photo!);
-      //await _uploadPhoto();
     } else {
       print('No image selected.');
     }

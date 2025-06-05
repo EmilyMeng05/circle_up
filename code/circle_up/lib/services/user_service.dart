@@ -61,9 +61,7 @@ class UserService {
   Future<List<AppUser>> getUsersByIds(List<String> userIds) async {
     if (userIds.isEmpty) return [];
 
-    final users = await Future.wait(
-      userIds.map((id) => getUserById(id)),
-    );
+    final users = await Future.wait(userIds.map((id) => getUserById(id)));
 
     return users.whereType<AppUser>().toList();
   }

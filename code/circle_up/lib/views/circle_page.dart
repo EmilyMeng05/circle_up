@@ -232,6 +232,9 @@ class _CirclePageState extends State<CirclePage> {
                           (user) => ListTile(
                             leading: const Icon(Icons.person),
                             title: Text(user.displayName ?? user.email),
+                            subtitle: Text(
+                              '${user.numSuccess} successes / ${user.numFailure} failures',
+                            ),
                           ),
                         ),
                       ],
