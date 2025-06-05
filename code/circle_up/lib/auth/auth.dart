@@ -5,7 +5,7 @@ class Auth {
   // Sign-in function that authenticates a user with the given email and password
   Future<void> signIn(String email, String password) async {
     try {
-      final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
@@ -23,7 +23,7 @@ class Auth {
   Future<void> signUp(String email, String password) async {
     // Implement sign-up logic here
     try {
-      final credential = await FirebaseAuth.instance
+      await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {

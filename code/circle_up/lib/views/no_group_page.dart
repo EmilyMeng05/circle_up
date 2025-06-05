@@ -59,7 +59,7 @@ class _NoGroupPageState extends State<NoGroupPage> {
             duration: const Duration(seconds: 5),
           ),
         );
-        // TODO: Insert a notification for the user @ circle.alarmTime => Should be a call made
+        
 
         NotificationService().scheduleNotification(
           id: circle.hashCode,
@@ -103,7 +103,7 @@ class _NoGroupPageState extends State<NoGroupPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Successfully joined circle!')),
         );
-        // TODO: Insert a notification for the user @ circle.alarmTime => Should be a call made
+        
         NotificationService().scheduleNotification(
           id: circle.hashCode,
           title: 'Circle Up Alarm',
@@ -168,6 +168,7 @@ class _NoGroupPageState extends State<NoGroupPage> {
                   borderRadius: BorderRadius.circular(10),
                   boxShadow: [
                     BoxShadow(
+                      // ignore: deprecated_member_use
                       color: Colors.grey.withOpacity(0.2),
                       spreadRadius: 1,
                       blurRadius: 4,

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
-import 'package:path/path.dart';
 import 'package:circle_up/photos/photo.dart';
 import 'package:circle_up/components/enter_button.dart';
 
@@ -36,7 +35,7 @@ class _UploadPhotosState extends State<UploadPhotos> {
       _undoPhotos.add(_photo!);
       //await _uploadPhoto();
     } else {
-      print('No image selected.');
+      // print('No image selected.');
     }
   }
 
@@ -49,39 +48,10 @@ class _UploadPhotosState extends State<UploadPhotos> {
       /// wait for user to confirm 
       _undoPhotos.add(_photo!);
     } else {
-      print('No image selected.');
+      // print('No image selected.');
     }
   }
 
-  // TODO: Figure out why this isn't working
-  // // Confirm upload with user before proceeding
-  // Future<void> _confirmAndUploadPhoto() async {
-  //   if (_photo == null) return;
-
-  //   final shouldUpload = await showDialog<bool>(
-  //     context: context as BuildContext,
-  //     builder: (context) => AlertDialog(
-  //       title: const Text('Confirm Upload'),
-  //       content: const Text('Do you want to upload this photo?'),
-  //       actions: [
-  //         TextButton(
-  //           onPressed: () => Navigator.of(context).pop(false),
-  //           child: const Text('No'),
-  //         ),
-  //         TextButton(
-  //           onPressed: () => Navigator.of(context).pop(true),
-  //           child: const Text('Yes'),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-
-  //   if (shouldUpload == true) {
-  //     await _uploadPhoto();
-  //   }
-  //   ///if the user click no, we will just take them to the same page where they would
-  //   ///choose to upload photo from camera or select the photo
-  // }
 
   // Upload the photo to Firebase and show success/failure message
   Future<void> _uploadPhoto() async {
@@ -89,13 +59,11 @@ class _UploadPhotosState extends State<UploadPhotos> {
 
     final result = await Photo.uploadPhoto(_photo);
     if (result != null) {
-      // TODO: For some reason, this is NOT working on my end
       // ScaffoldMessenger.of(context as BuildContext).showSnackBar(
       //   const SnackBar(content: Text('Photo uploaded successfully!')),
       // );
       setState(() => _photo = null); // Clear selected photo
     } else {
-      // TODO: For some reason, this is NOT working on my end
       // ScaffoldMessenger.of(context as BuildContext).showSnackBar(
       //   const SnackBar(content: Text('Failed to upload photo.')),
       // );

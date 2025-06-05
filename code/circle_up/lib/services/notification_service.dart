@@ -1,4 +1,3 @@
-import 'package:flutter/rendering.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
@@ -8,7 +7,7 @@ import 'package:permission_handler/permission_handler.dart';
 class NotificationService {
   final notifPlugin = FlutterLocalNotificationsPlugin();
 
-  bool _isInitialized = false;
+  final bool _isInitialized = false;
   bool get isInitialized => _isInitialized;
 
   // init
@@ -81,7 +80,7 @@ class NotificationService {
       notificationDetails(),
       androidScheduleMode: AndroidScheduleMode.alarmClock
     );
-    print('Scheduled notification for $scheduledDateTime');
+    // print('Scheduled notification for $scheduledDateTime');
   }
 
   Future<void> requestNotificationPermission() async {
@@ -89,7 +88,7 @@ class NotificationService {
     if (!status.isGranted) {
       final result = await Permission.notification.request();
       if (result != PermissionStatus.granted) {
-        print("Notification permission not granted");
+        // print("Notification permission not granted");
       }
     }
   }

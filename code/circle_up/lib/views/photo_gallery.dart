@@ -1,5 +1,4 @@
 // This will be the place where the photo gallery will be displayed
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import '../photos/photo.dart';
 
@@ -14,7 +13,7 @@ class PhotoGallery extends StatefulWidget {
 }
 
 class _PhotoGalleryState extends State<PhotoGallery>{
-  //late AnimationController _controller;  TODO: For nice swipe effect add animation
+  //late AnimationController _controller; 
   int curIdx = 0;
   double dragAmount = 0.0;
 

@@ -11,7 +11,6 @@ class Photo {
   Photo({required this.fileName, required this.downloadUrl});
 
   /// Uploads photo and returns a Photo object
-  /// ** TODO: Check if a photo is being duplicated
   static Future<Photo?> uploadPhoto(File? photo) async {
     if (photo == null) return null;
 
@@ -43,7 +42,7 @@ class Photo {
 
       return Photo(fileName: fileName, downloadUrl: downloadUrl);
     } catch (e) {
-      print('Error uploading photo: $e');
+      // print('Error uploading photo: $e');
       return null;
     }
   }
@@ -71,7 +70,7 @@ class Photo {
         await doc.reference.delete();
       }
     } catch (e) {
-      print('Error deleting photo: $e');
+      // print('Error deleting photo: $e');
     }
   }
 
@@ -101,7 +100,7 @@ class Photo {
 /// Retrieves photos from all members in a circle
 Future<List<Photo>> getCirclePhotos(List<String> memberIds) async {
   if (memberIds.isEmpty) return [];
-  print('Fetching photos for circle members: $memberIds');
+  // print('Fetching photos for circle members: $memberIds');
   final List<Photo> photos = [];
   try {
     for (String memberId in memberIds) {
@@ -133,8 +132,8 @@ Future<List<Photo>> getCirclePhotos(List<String> memberIds) async {
       }
     }
   } catch (e) {
-    print('Error retrieving circle photos: $e');
+    // print('Error retrieving circle photos: $e');
   }
-  print('Retrieved ${photos.length} photos for circle members');
+  // print('Retrieved ${photos.length} photos for circle members');
   return photos;
 }
