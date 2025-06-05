@@ -4,15 +4,23 @@ import 'package:flutter/services.dart';
 import '../models/alarm_circle.dart';
 import '../services/alarm_circle_service.dart';
 import '../services/user_service.dart';
-import '../components/enter_button.dart';
 import 'photo_gallery.dart';
+import '../models/user.dart';
 
-class CirclePage extends StatelessWidget {
+class CirclePage extends StatefulWidget {
   final AlarmCircle circle;
+  // final AlarmCircleService _circleService = AlarmCircleService();
+  // final UserService _userService = UserService();
+  const CirclePage({super.key, required this.circle});
+
+  @override
+  State<CirclePage> createState() => _CirclePageState();
+}
+
+class _CirclePageState extends State<CirclePage> {
   final AlarmCircleService _circleService = AlarmCircleService();
   final UserService _userService = UserService();
-
-  CirclePage({super.key, required this.circle});
+  late Future<List<AppUser>> _membersFuture;
 
   String _formatDateTime(DateTime dateTime) {
     final hour =
@@ -27,7 +35,7 @@ class CirclePage extends StatelessWidget {
 
   Future<void> _leaveCircle(BuildContext context) async {
     try {
-      await _circleService.leaveCircle(circle.id);
+      await _circleService.leaveCircle(widget.circle.id);
       await _userService.leaveGroup();
       if (context.mounted) {
         Navigator.pushReplacementNamed(context, '/noGroup');
@@ -42,7 +50,15 @@ class CirclePage extends StatelessWidget {
   }
 
   @override
+  void initState() {
+    super.initState();
+    // Initialize the members future
+    _membersFuture = _userService.getUsersByIds(widget.circle.memberIds);
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final circle = widget.circle;
     return Scaffold(
       backgroundColor: Colors.grey[300],
       appBar: AppBar(
@@ -191,24 +207,36 @@ class CirclePage extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '${circle.memberIds.length} members',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    ...circle.memberIds.map(
-                      (member) => ListTile(
-                        leading: const Icon(Icons.person),
-                        title: Text(member),
-                      ),
-                    ),
-                  ],
+                child: FutureBuilder<List<AppUser>>(
+                  future: _membersFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    if (snapshot.hasError) {
+                      return Text('Error loading members');
+                    }
+                    final members = snapshot.data ?? [];
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${members.length} members',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        ...members.map(
+                          (user) => ListTile(
+                            leading: const Icon(Icons.person),
+                            title: Text(user.displayName ?? user.email),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
                 ),
               ),
 
