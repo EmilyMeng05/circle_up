@@ -15,11 +15,11 @@ We used the 10 questions and 5 responses provided in class. We gave the user our
 9. I felt very confident using the [project].
 10.I needed to learn a lot of things before I could get going with this [project].
 # Response: 
-• Strongly Disagree: 1 point
-• Disagree: 2 points
-• Neutral: 3 points
-• Agree: 4 points
-• Strongly Agree: 5 points
+- Strongly Disagree: 1 point
+- Disagree: 2 points
+- Neutral: 3 points
+- Agree: 4 points
+- Strongly Agree: 5 points
 
 ## Summary of the Data ##
 Overall SUS Score: 80
@@ -28,47 +28,47 @@ Learnability Subscore: 71.88
 
 ## Individual SUS Data ## 
 We are going to display their score based on questions from 1 to 10
-Person 1: 
+### Person 1: 
 - Response: 4,1,4,3,5,1,4,2,4,1 
 - SUS score: 82.5
 - Learnability: 75
 - Usability: 84.38
-Person 2: 
+### Person 2: 
 - Response: 3,1,5,1,2,1,5,1,5,1 
 - SUS score: 87.5
 - Learnability: 100
 - Usability: 84.38
-Person 3: 
+### Person 3: 
 - Response: 3,1,3,1,5,1,5,3,2,1
 - SUS score: 90
 - Learnability: 100
 - Usability: 71.88
-Person 4: 
+### Person 4: 
 - Response: 3,1,4,1,4,2,4,1,4,1
 - SUS score: 95
 - Learnability: 100
 - Usability: 78.12
-Person 5: 
+### Person 5: 
 - Response: 1,3,1,1,1,1,2,4,2,1
 - SUS score: 55
 - Learnability: 100
 - Usability: 28.12
-Person 6: 
+### Person 6: 
 - Response: 3,1,4,2,3,1,4,2,3,1
 - SUS score: 75
 - Learnability: 87.5
 - Usability: 71.875
-Person 7: 
+### Person 7: 
 - Response: 4,1,5,3,4,1,4,2,5,1 
 - SUS score: 85
 - Learnability: 75
 - Usability: 84.375
-Person 8:
+### Person 8:
 - Response: 5,1,5,2,4,1,5,1,5,1
 - SUS Score: 95
 - Learnability: 87.5
 - Usability: 93.75
-Person 9: 
+### Person 9: 
 - Response: 2,3,1,3,3,1,2,3,5,1
 - SUS score: 55
 - Learnability: 75
