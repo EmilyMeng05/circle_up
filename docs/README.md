@@ -4,13 +4,14 @@ Note: The application is best run on a phone, especially an android phone runnin
 to view all of the notifications (when the alarm time hits) and also upload and view the photo's without any issues. 
 
 # Instructions to Run the Project
-Android:
+## Android Instructions: 
 - Flutter clean: In order to remove any conflicting dependencies
-- Flutter pub get: In order to install any required packaged
+- Flutter pub get: In order to install any required packages
 ** Flutter pub get should be enough however, to run the project as, all of the packages should be installed **
 
-IOS:
-<FILL IN>
+## IOS Instructions:
+- flutter pub get: to install all required packages
+
 
 IMPORTANT: Our project makes use of Firebase, and thus, we use a .env file in order to store our API keys and secrets
 - In order to actuall run the application, these keys must be used, and the content of the .env file should have been emailed to the professors.
