@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../photos/photo.dart';
 
+/// A widget that displays a gallery of photos with swipe navigation.
 class PhotoGallery extends StatefulWidget {
   final List<Photo> photos;
 
@@ -38,55 +39,68 @@ class _PhotoGalleryState extends State<PhotoGallery> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[300],
-      appBar: AppBar(
-        title: const Text('Photo Gallery'),
+    return Semantics(
+      label: 'Photo Gallery',
+      child: Scaffold(
         backgroundColor: Colors.grey[300],
-        elevation: 0,
-      ),
-      body: widget.photos.isEmpty
-          ? Center(
-              child: Semantics(
-                label: 'No photos available',
-                child: Text('No photos available'),
-              ),
-            )
-          : GestureDetector(
-              onPanUpdate: _onPanUpdate,
-              onPanEnd: _onPanEnd,
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Semantics(
-                      label: 'Photo ${curIdx + 1} of ${widget.photos.length}',
-                      image: true,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black, width: 2),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Colors.black26,
-                              blurRadius: 10,
-                              offset: Offset(0, 5),
+        appBar: AppBar(
+          title: const Text('Photo Gallery'),
+          backgroundColor: Colors.grey[300],
+          elevation: 0,
+        ),
+        body: widget.photos.isEmpty
+            ? Center(
+                child: Semantics(
+                  label: 'No photos available',
+                  child: Text('No photos available'),
+                ),
+              )
+            : Semantics(
+                label: 'Swipeable photo gallery with ${widget.photos.length} photos',
+                child: GestureDetector(
+                  onPanUpdate: _onPanUpdate,
+                  onPanEnd: _onPanEnd,
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Semantics(
+                          label: 'Photo ${curIdx + 1} of ${widget.photos.length}. Swipe left or right to navigate.',
+                          image: true,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.black, width: 2),
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Colors.black26,
+                                  blurRadius: 10,
+                                  offset: Offset(0, 5),
+                                ),
+                              ],
                             ),
-                          ],
+                            padding: const EdgeInsets.all(10),
+                            child: Image.network(
+                              widget.photos[curIdx].downloadUrl,
+                              fit: BoxFit.cover,
+                              width: 300,
+                              height: 300,
+                            ),
+                          ),
                         ),
-                        padding: const EdgeInsets.all(10),
-                        child: Image.network(
-                          widget.photos[curIdx].downloadUrl,
-                          fit: BoxFit.cover,
-                          width: 300,
-                          height: 300,
+                        const SizedBox(height: 20),
+                        Semantics(
+                          label: 'Navigation instructions',
+                          child: Text(
+                            'Swipe left or right to navigate',
+                            style: TextStyle(color: Colors.grey[600]),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-                    const SizedBox(height: 20),
-                  ],
+                  ),
                 ),
               ),
-            ),
+      ),
     );
   }
 }

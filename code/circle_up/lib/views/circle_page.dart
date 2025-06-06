@@ -85,94 +85,129 @@ class _CirclePageState extends State<CirclePage> {
   Widget build(BuildContext context) {
     final circle = widget.circle;
 
-    return Scaffold(
-      backgroundColor: Colors.grey[300],
-      appBar: AppBar(
-        title: const Text('Circle Details'),
+    return Semantics(
+      label: 'Circle Details Page',
+      child: Scaffold(
         backgroundColor: Colors.grey[300],
-        elevation: 0,
-        automaticallyImplyLeading: false,
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text('Circle Code', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
-              const SizedBox(height: 10),
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                  boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.2), blurRadius: 4)],
+        appBar: AppBar(
+          title: const Text('Circle Details'),
+          backgroundColor: Colors.grey[300],
+          elevation: 0,
+          automaticallyImplyLeading: false,
+        ),
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Semantics(
+                  label: 'Circle Code Section',
+                  child: const Text('Circle Code', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(circle.code, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, letterSpacing: 2)),
-                    IconButton(
-                      icon: const Icon(Icons.copy),
-                      onPressed: () {
-                        Clipboard.setData(ClipboardData(text: circle.code));
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Circle code copied to clipboard')),
-                        );
-                      },
+                const SizedBox(height: 10),
+                Semantics(
+                  label: 'Circle Code Display and Copy Button',
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.2), blurRadius: 4)],
                     ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 40),
-              const Text('Alarm Time', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
-              const SizedBox(height: 10),
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                  boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.2), blurRadius: 4)],
-                ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.access_time),
-                    const SizedBox(width: 10),
-                    Text(_formatDateTime(circle.alarmTime), style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500)),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 40),
-              const Text('Members', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
-              const SizedBox(height: 10),
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                  boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.2), blurRadius: 4)],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('${circle.memberIds.length} members', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
-                    const SizedBox(height: 10),
-                    ...circle.memberIds.map((member) => ListTile(leading: const Icon(Icons.person), title: Text(member))),
-                  ],
-                ),
-              ),
-              const Spacer(),
-              Center(
-                child: ElevatedButton(
-                  onPressed: () => _leaveCircle(context),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red[400],
-                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Semantics(
+                          label: 'Circle Code: ${circle.code}',
+                          child: Text(circle.code, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, letterSpacing: 2)),
+                        ),
+                        Semantics(
+                          button: true,
+                          label: 'Copy Circle Code',
+                          child: IconButton(
+                            icon: const Icon(Icons.copy),
+                            onPressed: () {
+                              Clipboard.setData(ClipboardData(text: circle.code));
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Circle code copied to clipboard')),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  child: const Text('Leave Circle', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 ),
-              ),
-            ],
+                const SizedBox(height: 40),
+                Semantics(
+                  label: 'Alarm Time Section',
+                  child: const Text('Alarm Time', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
+                ),
+                const SizedBox(height: 10),
+                Semantics(
+                  label: 'Alarm Time Display: ${_formatDateTime(circle.alarmTime)}',
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.2), blurRadius: 4)],
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.access_time),
+                        const SizedBox(width: 10),
+                        Text(_formatDateTime(circle.alarmTime), style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500)),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 40),
+                Semantics(
+                  label: 'Members Section',
+                  child: const Text('Members', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
+                ),
+                const SizedBox(height: 10),
+                Semantics(
+                  label: 'Members List with ${circle.memberIds.length} members',
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.2), blurRadius: 4)],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('${circle.memberIds.length} members', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                        const SizedBox(height: 10),
+                        ...circle.memberIds.map((member) => Semantics(
+                              label: 'Member: $member',
+                              child: ListTile(leading: const Icon(Icons.person), title: Text(member)),
+                            )),
+                      ],
+                    ),
+                  ),
+                ),
+                const Spacer(),
+                Center(
+                  child: Semantics(
+                    button: true,
+                    label: 'Leave Circle Button',
+                    child: ElevatedButton(
+                      onPressed: () => _leaveCircle(context),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red[400],
+                        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                      ),
+                      child: const Text('Leave Circle', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
