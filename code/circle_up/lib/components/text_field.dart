@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
 
+/// A reusable text field component that follows a consistent design pattern.
+/// This text field is styled with a light grey background, white borders,
+/// and supports both regular and password input modes.
 class CustomTextField extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
   final bool obscureText;
 
+  /// Creates a CustomTextField widget
+  ///
+  /// [controller] is required and manages the text field's content
+  /// [hintText] is required and specifies the placeholder text
+  /// [obscureText] is required and determines if the text should be hidden
   const CustomTextField({
     super.key,
     required this.controller,

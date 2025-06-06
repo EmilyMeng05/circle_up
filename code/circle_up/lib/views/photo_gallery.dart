@@ -11,14 +11,18 @@ class PhotoGallery extends StatefulWidget {
   _PhotoGalleryState createState() => _PhotoGalleryState();
 }
 
+/// State for the photo gallery page.
+/// Handles the display and navigation of photos in a gallery.
 class _PhotoGalleryState extends State<PhotoGallery> {
   int curIdx = 0;
   double dragAmount = 0.0;
 
+  /// Handles the update of the photo gallery when the user drags the photo.
   void _onPanUpdate(DragUpdateDetails details) {
     dragAmount += details.delta.dx;
   }
 
+  /// Handles the end of the drag operation on the photo gallery.
   void _onPanEnd(DragEndDetails details) {
     if (dragAmount.abs() > 100) {
       setState(() {

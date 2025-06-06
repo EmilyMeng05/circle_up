@@ -46,6 +46,7 @@ class _AlarmPageState extends State<AlarmPage> {
 
   @override
   void dispose() {
+    // Clean up timer when widget is disposed
     _timer.cancel();
     super.dispose();
   }

@@ -14,6 +14,8 @@ class UploadPhotos extends StatefulWidget {
   _UploadPhotosState createState() => _UploadPhotosState();
 }
 
+/// State for the upload photos page.
+/// Handles the selection and upload of photos from the gallery or camera.
 class _UploadPhotosState extends State<UploadPhotos> {
   final firebase_storage.FirebaseStorage storage = firebase_storage.FirebaseStorage.instance;
   final ImagePicker _picker = ImagePicker();
@@ -22,6 +24,7 @@ class _UploadPhotosState extends State<UploadPhotos> {
   final List<File> _undoPhotos = [];
   final List<File> _redoPhotos = [];
 
+  /// Selects a photo from the gallery.
   Future<void> _selectPhoto() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
@@ -30,6 +33,7 @@ class _UploadPhotosState extends State<UploadPhotos> {
     }
   }
 
+  /// Uploads a photo from the camera.
   Future<void> _uploadFromCamera() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.camera);
     if (pickedFile != null) {
@@ -38,6 +42,7 @@ class _UploadPhotosState extends State<UploadPhotos> {
     }
   }
 
+  /// Uploads a photo from the gallery.
   Future<void> _uploadPhoto() async {
     if (_photo == null) return;
     final result = await Photo.uploadPhoto(_photo);
@@ -46,6 +51,7 @@ class _UploadPhotosState extends State<UploadPhotos> {
     }
   }
 
+  /// Undo the last photo selection.
   void undoPhoto() {
     if (_undoPhotos.isNotEmpty) {
       setState(() {
@@ -56,6 +62,7 @@ class _UploadPhotosState extends State<UploadPhotos> {
     }
   }
 
+  /// Redo the last photo selection.
   void redoPhoto() {
     if (_redoPhotos.isNotEmpty) {
       setState(() {
@@ -66,6 +73,7 @@ class _UploadPhotosState extends State<UploadPhotos> {
     }
   }
 
+  /// Builds the main page for the upload photos page.
   @override
   Widget build(BuildContext context) {
     return Scaffold(

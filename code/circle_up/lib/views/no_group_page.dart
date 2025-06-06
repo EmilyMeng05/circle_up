@@ -38,6 +38,9 @@ class _NoGroupPageState extends State<NoGroupPage> {
     }
   }
 
+  /// Creates a new alarm circle with the selected time.
+  /// Schedules a notification for the circle alarm.
+  /// Navigates to the circle page on success.
   Future<void> _createCircle() async {
     setState(() => _isLoading = true);
     try {
@@ -65,6 +68,9 @@ class _NoGroupPageState extends State<NoGroupPage> {
     }
   }
 
+  /// Joins an existing alarm circle with the provided code.
+  /// Schedules a notification for the circle alarm.
+  /// Navigates to the circle page on success.
   Future<void> _joinCircle() async {
     if (circleCodeController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please enter a circle code')));
@@ -92,6 +98,8 @@ class _NoGroupPageState extends State<NoGroupPage> {
     }
   }
 
+  /// Builds the section for setting the alarm time.
+  /// Displays the selected alarm time and provides a button to select a new time.
   Widget _buildAlarmTimeSection() {
     return Semantics(
       container: true,
@@ -141,6 +149,8 @@ class _NoGroupPageState extends State<NoGroupPage> {
     );
   }
 
+  /// Builds the section for creating and joining circles.
+  /// Displays buttons to create a new circle and join an existing circle.
   Widget _buildCircleActionsSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -186,6 +196,7 @@ class _NoGroupPageState extends State<NoGroupPage> {
     );
   }
 
+  /// Builds the main page for the no group page.
   @override
   Widget build(BuildContext context) {
     final user = context.watch<AuthProvider>().user;

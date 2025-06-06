@@ -4,6 +4,8 @@ import 'package:timezone/data/latest.dart' as tz;
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+/// Service responsible for handling local notifications in the app.
+/// Manages notification permissions, scheduling, and display for alarm reminders.
 class NotificationService {
   final notifPlugin = FlutterLocalNotificationsPlugin();
 
@@ -39,7 +41,8 @@ class NotificationService {
     await notifPlugin.initialize(initSettings);
   }
 
-
+  /// Returns the notification details configuration
+  /// Sets up the Android notification channel with high priority
   NotificationDetails notificationDetails() {
     return const NotificationDetails(
       android: AndroidNotificationDetails(
@@ -52,6 +55,12 @@ class NotificationService {
     );
   }
 
+  /// Shows an immediate notification
+  ///
+  /// [id] - Unique identifier for the notification (defaults to 0)
+  /// [title] - Notification title
+  /// [body] - Notification message
+  /// [payload] - Optional data to be passed with the notification
   Future<void> showNotification({
     int id = 0,
     String? title,
@@ -61,6 +70,13 @@ class NotificationService {
     return notifPlugin.show(id, title, body, notificationDetails());
   }
 
+  /// Schedules a notification for a specific time
+  ///
+  /// [id] - Unique identifier for the notification (defaults to 1)
+  /// [title] - Notification title
+  /// [body] - Notification message
+  /// [hour] - Hour of the day (0-23)
+  /// [minute] - Minute of the hour (0-59)
   Future<void> scheduleNotification({
     int id = 1,
     required String title,
@@ -70,11 +86,7 @@ class NotificationService {
   }) async {
     final now = tz.TZDateTime.now(tz.local);
 
-    // get the minute and hour from the scheduled time
-
-    // final scheduledHour = scheduledTime.hour;
-    // final scheduledMinute = scheduledTime.minute;
-
+    // Create scheduled date time using current date and specified time
     var scheduledDateTime = tz.TZDateTime(
       tz.local,
       now.year,
@@ -84,6 +96,7 @@ class NotificationService {
       minute,
     );
 
+    // Schedule the notification using Android's alarm clock mode for reliability
     await notifPlugin.zonedSchedule(
       id,
       title,
@@ -92,9 +105,10 @@ class NotificationService {
       notificationDetails(),
       androidScheduleMode: AndroidScheduleMode.alarmClock
     );
-    // print('Scheduled notification for $scheduledDateTime');
   }
 
+  /// Requests notification permission from the user
+  /// Checks current permission status and requests if not granted
   Future<void> requestNotificationPermission() async {
     final status = await Permission.notification.status;
     if (!status.isGranted) {

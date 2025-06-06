@@ -13,6 +13,7 @@ class AuthModal extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
+  // Handle sign in errors and display appropriate messages to the user
   Future<void> _handleLogin(BuildContext context) async {
     final authProvider = context.read<AuthProvider>();
     await authProvider.signIn(emailController.text, passwordController.text);

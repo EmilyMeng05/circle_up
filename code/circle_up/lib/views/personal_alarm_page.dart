@@ -9,6 +9,8 @@ class PersonalAlarmPage extends StatefulWidget {
   State<PersonalAlarmPage> createState() => _PersonalAlarmPageState();
 }
 
+/// State for the personal alarm page.
+/// Handles loading and saving the user's personal alarm time.
 class _PersonalAlarmPageState extends State<PersonalAlarmPage> {
   final UserService _userService = UserService();
   TimeOfDay _selectedTime = TimeOfDay.now();
@@ -20,6 +22,7 @@ class _PersonalAlarmPageState extends State<PersonalAlarmPage> {
     _loadCurrentAlarmTime();
   }
 
+  /// Loads the user's current alarm time from the database.
   Future<void> _loadCurrentAlarmTime() async {
     final currentAlarmTime = await _userService.getPersonalAlarmTime();
     if (currentAlarmTime != null) {
@@ -32,6 +35,7 @@ class _PersonalAlarmPageState extends State<PersonalAlarmPage> {
     }
   }
 
+  /// Opens a time picker dialog to allow the user to select a new alarm time.
   Future<void> _selectTime(BuildContext context) async {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
@@ -44,12 +48,14 @@ class _PersonalAlarmPageState extends State<PersonalAlarmPage> {
     }
   }
 
+  /// Formats a TimeOfDay object into a readable time string
   String _formatTimeOfDay(TimeOfDay time) {
     final hour = time.hourOfPeriod == 0 ? 12 : time.hourOfPeriod;
     final period = time.period == DayPeriod.am ? 'AM' : 'PM';
     return '${hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')} $period';
   }
 
+  /// Saves the user's selected alarm time to the database.
   Future<void> _saveAlarmTime() async {
     setState(() => _isLoading = true);
     try {
@@ -81,6 +87,7 @@ class _PersonalAlarmPageState extends State<PersonalAlarmPage> {
     }
   }
 
+  /// Builds the main page for the personal alarm page.
   @override
   Widget build(BuildContext context) {
     return Scaffold(

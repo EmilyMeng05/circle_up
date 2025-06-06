@@ -1,21 +1,56 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+/// Represents a user in the application.
+/// This model stores user information including authentication details,
+/// profile information, and alarm-related data.
 class AppUser {
+  /// Unique identifier for the user
   final String id;
+
+  /// User's email address
   final String email;
+
+  /// User's display name (optional)
   final String? displayName;
+
+  /// URL to user's profile photo (optional)
   final String? photoUrl;
+
+  /// When the user account was created
   final DateTime createdAt;
+
+  /// When the user last logged in
   final DateTime lastLoginAt;
+
+  /// User's personal alarm time setting (optional)
   final DateTime? personalAlarmTime;
+
+  /// Whether the user is currently in a group
   final bool isInGroup;
+
+  /// Code of the group the user is in (if any)
   final String? groupCode;
-  /// uid for the user
+
+  /// Firebase Authentication UID for the user
   final uid = FirebaseAuth.instance.currentUser?.uid;
+
+  /// Number of successful alarm completions
   final int numSuccess;
+
+  /// Number of failed alarm attempts
   final int numFailure;
 
+  /// Creates an AppUser instance
+  ///
+  /// [id] is required and must be unique
+  /// [email] is required and must be valid
+  /// [createdAt] is required and sets account creation time
+  /// [lastLoginAt] is required and tracks last login
+  /// [displayName], [photoUrl], [personalAlarmTime] are optional
+  /// [isInGroup] defaults to false if not specified
+  /// [groupCode] is optional and only set when user is in a group
+  /// [numSuccess] and [numFailure] default to 0 if not specified
   AppUser({
     required this.id,
     required this.email,
