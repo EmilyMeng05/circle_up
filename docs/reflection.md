@@ -17,14 +17,13 @@ to perform sign-in, sign-up, in order to signin and signup users of our applicat
 4) Undo/Redo
 - If a user is trying to upload a photo, and they take a photo with their camera, the photo preview displays. However, if the user wants to use a different photo, for whatever reason, they can choose to take another photo, and the preview will update. However, if the user changes their mind again, they can use undo/redo in order to quickly retrieve any previous selections. From personal experience, many people take multiple photos and upload the best looking photo. However, there are times, when the initial photo taken was the best photo. Thus, having a way to remember this through the undo and redo, allows for our users to have a smooth experience, and go back "versions" of their photos. 
 
-
 5) Gestures
 - In our photo gallery, users can navigate through multiple photos by swiping right or left, in order view the photos. These photos make use of GestureDetection, and use the onPan gesture in order to detect the swipe. Further, to ensure that it is actually a proper swipe and not mistaken for a mis swipe, there is a decent buffer room encoded for the distance, so that mis clicks or mis taps would not be mistaken for a swipe. 
 
 
 # Learnings from Accessibility in App Design
 
-One of the major learning from the Accessbility in Design lecture from CSE 340 was the fact that "You are NOT the user". In designing our application, this was important to us, since we wanted to design the UI to be both minimal/simple, but also easy to navigate for people of all kinds of backgrounds/perspectives. Thus, we built a UI, where the background and buttons had a noticable constrast (black buttons, light grey background),making it clear to actually see the UI elements. Furthermore, we included semanticLabels throughout the codebase, so that incase someone is using a screenreader/talkback on the application, they are also able to understand how to use the application, and not be confused. In general, as explained in lecutre "designing for the most exteme case results in designs that benefit many people". Thus, we felt that the overall app functioned better and was easier to use, when we designed for the most extreme cases, as many of these changes just benefit and help the user experience as a whole. 
+One of the major learning from the Accessibility in Design lecture from CSE 340 was the fact that "You are NOT the user". In designing our application, this was important to us, since we wanted to design the UI to be both minimal/simple, but also easy to navigate for people of all kinds of backgrounds/perspectives. Thus, we built a UI, where the background and buttons had a noticeable constrast (black buttons, light grey background),making it clear to actually see the UI elements. Furthermore, we included semanticLabels throughout the codebase, so that incase someone is using a screenreader/talkback on the application, they are also able to understand how to use the application, and not be confused. In general, as explained in lecture "designing for the most exteme case results in designs that benefit many people". Thus, we felt that the overall app functioned better and was easier to use, when we designed for the most extreme cases, as many of these changes just benefit and help the user experience as a whole. 
 
 # Citations
 
@@ -42,9 +41,11 @@ input, and also were inspired to make a simple UI for the login and sign-up view
 4) https://firebase.google.com/docs/auth/flutter/password-auth
 - This contains the documentation for FireBase auth API for flutter specifically
 
-5)https://api.flutter.dev/flutter/material/showTimePicker.html
+5) https://api.flutter.dev/flutter/material/showTimePicker.html
 - Documentation for showTimePicker in order to select the alarm time in the noGroup page
 
+## Additional Acknowledgments
+We did not receive help from specific individuals (TAs, or instructors) beyond general class slides and Edstem replies about rubric related questions. We did use ChatGPT initially to figure out dependency related questions, like why is firebase not stored at the correct pathway or why can't I run the file because I have a different cocopod version. The help was very useful! Chat fixed the issue immediately. We did not use any significant portions of starter code from previous CSE 340 assignments.
 
 # Futher Understanding
 In terms of presenting a challenge, this project was quite challenging for our group to work with. There was significant coding required, to get each feature working, and the code to handle user authentication, photo upload/storage, and lobby/circle creation was quite difficult, as it was not just to do with writing code. When working with a project with this much complexity, we found that it was a lot more the thinking and planning that helped us solve these challenges, as if we knew the "schemas" for the database, and planned out all of the potential things we would need to store, the code was much easier to write. While the backend portion was complicated enough, we also needed to display all of this in a nice and presentable manner in the UI/views, which was also a pretty major challenge, as each feature was basically a step up from what we had done in the class projects. 
