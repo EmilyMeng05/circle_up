@@ -3,6 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 class Auth {
   // Sign-in function that authenticates a user with the given email and password
+  /// [email] - User's email address
+  /// [password] - User's password
+  /// If there is an error during sign-in, throw error
   Future<void> signIn(String email, String password) async {
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
@@ -20,6 +23,9 @@ class Auth {
   }
 
   // Sign-up function that creates a new user, with the provided email and password
+  /// [email] - User's email address
+  /// [password] - User's password
+  /// If there is an error during sign-up, throw error
   Future<void> signUp(String email, String password) async {
     // Implement sign-up logic here
     try {

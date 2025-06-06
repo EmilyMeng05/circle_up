@@ -8,17 +8,28 @@ import 'package:provider/provider.dart';
 import 'package:circle_up/services/alarm_circle_service.dart';
 import 'package:circle_up/views/circle_page.dart';
 
+/*
+ * Represents the Login modal for the circle up application as a StatelessWidget
+ * If the user enters this modal, they will be prompted to login to the application
+ * If the user is not signed up to the application, they can navigate to the sign up page 
+*/
 class AuthModal extends StatelessWidget {
   AuthModal({super.key});
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController emailController = TextEditingController(); // Controller for the email input
+  final TextEditingController passwordController = TextEditingController(); // Controller for the password input
 
   // Handle sign in errors and display appropriate messages to the user
+  // If the user is authenticated and in a group, navigate to their Circle page
+  // If the user is authenticated but not in a group, navigate to the no group page
+  // In all other cases, do nothing, since the user is not authenticated
+  // If an error occurs during the sign-in process, an error message will be displayed
   Future<void> _handleLogin(BuildContext context) async {
     final authProvider = context.read<AuthProvider>();
     await authProvider.signIn(emailController.text, passwordController.text);
 
+    // Ensures the user is authenticated
     if (authProvider.isAuthenticated) {
+      // Checks if the user is already in a group
       if (authProvider.isInGroup) {
         // Get the user's circle and navigate to CirclePage
         final circles = await AlarmCircleService().getUserCircles().first;
@@ -32,11 +43,13 @@ class AuthModal extends StatelessWidget {
             );
           }
         } else {
+          // The user is not in a group
           if (context.mounted) {
             Navigator.pushReplacementNamed(context, '/noGroup');
           }
         }
       } else {
+        // The user is authenticated but not in a group
         if (context.mounted) {
           Navigator.pushReplacementNamed(context, '/noGroup');
         }
@@ -44,6 +57,11 @@ class AuthModal extends StatelessWidget {
     }
   }
 
+  /*
+   * Builds the login modal UI
+   * This allows the user to enter their email and password and login
+   * It also allows the user to navigate to the sign up page if they do not have an account
+  */
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,6 +82,7 @@ class AuthModal extends StatelessWidget {
                 child: const Text('Welcome back to Circle Up, Please Log in'),
               ),
               const SizedBox(height: 20),
+              // Input fields for the email
               Semantics(
                 label: 'Email input field',
                 textField: true,
@@ -74,6 +93,7 @@ class AuthModal extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 10),
+              // Input fields for the password
               Semantics(
                 label: 'Password input field',
                 textField: true,
@@ -84,6 +104,9 @@ class AuthModal extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
+              // Represents the login button
+              // When the button is clicked, it will try to login the user
+              // If there is an error, displays the error in a snackbar
               Semantics(
                 label: 'Login button',
                 button: true,
@@ -103,6 +126,7 @@ class AuthModal extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
+              // Using this gesture detector, the user can navigate to the sign up page if they do not have an account
               Semantics(
                 label: 'Don\'t have an account? Sign Up link',
                 button: true,

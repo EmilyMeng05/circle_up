@@ -4,13 +4,18 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:path/path.dart';
 
+/// Represents a photo class, which handles uploading, deleting, and retreiving photos
 class Photo {
-  final String fileName;
-  final String downloadUrl;
+  final String fileName; // Name of the photo file
+  final String downloadUrl; // URL to download the photo from firebase
 
   Photo({required this.fileName, required this.downloadUrl});
 
   /// Uploads photo and returns a Photo object
+  /// [File? photo] - The photo file to upload
+  /// Tries to upload the photo to the storage and if there is an error, returns null
+  /// Returns a Photo object with the file name and download URL if successful
+  /// Ensures the user is authenticated prior to uploading
   static Future<Photo?> uploadPhoto(File? photo) async {
     if (photo == null) return null;
 
@@ -49,6 +54,10 @@ class Photo {
 
 
   // Deletes a photo from Firebase Storage and removes its metadata from Firestore
+  /// [downloadUrl] - The URL of the photo to delete
+  /// Ensures the user is authenticated prior to deleting
+  /// If the user is not authenticated, throws an exception
+  /// If the photo is successfully deleted, it removes the metadata from Firestore
   static Future<void> deletePhoto(String downloadUrl) async {
     try {
       final uid = FirebaseAuth.instance.currentUser?.uid;
@@ -75,6 +84,8 @@ class Photo {
   }
 
   /// Retrieves all photo metadata for the current user
+  /// Returns a list of Photo objects containing file names and download URLs
+  /// If the user is not authenticated, returns an empty list
   static Future<List<Photo>> getUserPhotos() async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null) return [];
@@ -98,6 +109,8 @@ class Photo {
 }
 
 /// Retrieves photos from all members in a circle
+/// Specifically, fetches for any photos uploaded in the last 24 hours
+/// [memberIds] - List of member IDs in the circle
 Future<List<Photo>> getCirclePhotos(List<String> memberIds) async {
   if (memberIds.isEmpty) return [];
   // print('Fetching photos for circle members: $memberIds');

@@ -2,11 +2,18 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../models/user.dart';
 
+/*
+ * Represents the user service class
+ * In this class, we handle all user-related operations and persist the user data to the database
+*/
 class UserService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   // Create or update user document in Firestore
+  // If the user does not exist, create a new object and persist to the database
+  // If the user exists, update their last login time and other details
+  // Returns the AppUser object representing the user
   Future<AppUser> createOrUpdateUser() async {
     final firebaseUser = _auth.currentUser;
     if (firebaseUser == null) throw Exception('User not authenticated');
@@ -26,6 +33,7 @@ class UserService {
       );
 
       await userDoc.set(newUser.toMap());
+      // Return newly created user object
       return newUser;
     } else {
       // Update existing user's last login
@@ -36,6 +44,7 @@ class UserService {
         'photoUrl': firebaseUser.photoURL,
       });
 
+      // Return updated user object
       return AppUser(
         id: user.id,
         email: user.email,
@@ -51,6 +60,7 @@ class UserService {
   }
 
   // Get user by ID
+  // Retrieves a user document from firestore based on the user's id
   Future<AppUser?> getUserById(String userId) async {
     final doc = await _firestore.collection('users').doc(userId).get();
     if (!doc.exists) return null;
@@ -67,6 +77,9 @@ class UserService {
   }
 
   // Update user profile
+  // When this is called, the user's display name or photo URL can be updated in the database
+  // Ensures the user is authenticated before making changes
+  // If the user is not authenticated, throws an exception
   Future<void> updateUserProfile({
     String? displayName,
     String? photoUrl,
@@ -120,6 +133,8 @@ class UserService {
   }
 
   // Join a group
+  // [groupCode]: Represents the unique group code to join
+  // If the user is not authenticated, throws an exception
   Future<void> joinGroup(String groupCode) async {
     final user = _auth.currentUser;
     if (user == null) throw Exception('User not authenticated');
@@ -131,6 +146,8 @@ class UserService {
   }
 
   // Leave a group
+  // If the user is not authenticated, throws an exception
+  // This will set the user's group status to false and clear the group code
   Future<void> leaveGroup() async {
     final user = _auth.currentUser;
     if (user == null) throw Exception('User not authenticated');
@@ -142,6 +159,8 @@ class UserService {
   }
 
   // Check if user is in a group
+  // Returns true if the user is currently in a group, false otherwise
+  // If the user is not authenticated, throws an exception
   Future<bool> isUserInGroup() async {
     final user = _auth.currentUser;
     if (user == null) throw Exception('User not authenticated');
@@ -154,6 +173,8 @@ class UserService {
   }
 
   // Get user's current group code
+  // Returns the group code if the user is in a group, null otherwise
+  // If the user is not authenticated, throws an exception
   Future<String?> getCurrentGroupCode() async {
     final user = _auth.currentUser;
     if (user == null) throw Exception('User not authenticated');
@@ -165,6 +186,9 @@ class UserService {
     return data['groupCode'];
   }
 
+  // Gets the current user object
+  // Returns an AppUser object if the user is authenticated and exists in Firestore
+  // If the user is not authenticated or does not exist, returns null
   Future<AppUser?> getUser() async {
     final user = _auth.currentUser;
     if (user == null) return null;

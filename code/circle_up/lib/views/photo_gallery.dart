@@ -24,6 +24,8 @@ class _PhotoGalleryState extends State<PhotoGallery> {
   }
 
   /// Handles the end of the drag operation on the photo gallery.
+  /// If the drag amount exceeds the fixed threshold of 100, we count this as a proper swipe
+  /// Based on the direction of the swipe, update the current index of the photo being displayed
   void _onPanEnd(DragEndDetails details) {
     if (dragAmount.abs() > 100) {
       setState(() {
@@ -37,6 +39,9 @@ class _PhotoGalleryState extends State<PhotoGallery> {
     dragAmount = 0.0;
   }
 
+  /// Builds the UI for the photo gallery page
+  /// If there are no photos in the gallery, displays a message to indicate no photos are available
+  /// If there are photos, displays the current photo in a frame like structure, with gesture navigation (swipe left or right)
   @override
   Widget build(BuildContext context) {
     return Semantics(
@@ -64,6 +69,8 @@ class _PhotoGalleryState extends State<PhotoGallery> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        // Displays the current photo in a frame-like structure
+                        // On swipe, updates the current index to show the next or previous photo
                         Semantics(
                           label: 'Photo ${curIdx + 1} of ${widget.photos.length}. Swipe left or right to navigate.',
                           image: true,
@@ -79,6 +86,7 @@ class _PhotoGalleryState extends State<PhotoGallery> {
                               ],
                             ),
                             padding: const EdgeInsets.all(10),
+                            // Displays the current photo
                             child: Image.network(
                               widget.photos[curIdx].downloadUrl,
                               fit: BoxFit.cover,

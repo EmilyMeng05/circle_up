@@ -4,18 +4,27 @@ import '../models/alarm_circle.dart';
 import '../services/user_service.dart';
 import 'dart:math';
 
+/*
+ * Represents the service for managing and creating alarm circles
+ * Allows for users to join, create, and leave alarm circles
+*/
 class AlarmCircleService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final UserService _userService = UserService();
 
   // Generate a random 6-digit code
+  // This code is used to identify a particular alarm circle
   String _generateCircleCode() {
     Random random = Random();
     return List.generate(6, (_) => random.nextInt(10)).join();
   }
 
   // Create a new alarm circle
+  // [alarmTime]: Represents the time when the alarm will trigger for all members
+  // If the user is already in a group, throws an exception
+  // If successful, creates a new circle document in Firestore and updates the user's group status
+  // Returns the created AlarmCircle object
   Future<AlarmCircle> createCircle(DateTime alarmTime) async {
     final user = _auth.currentUser;
     if (user == null) throw Exception('User not authenticated');
@@ -57,6 +66,9 @@ class AlarmCircleService {
   }
 
   // Join an existing circle
+  // [code]: Represents the unique circle code
+  // If the user is already in a circle or the code is not valid, throws an exception
+  // If successful, adds the user to the circle and updates their group status
   Future<AlarmCircle> joinCircle(String code) async {
     final user = _auth.currentUser;
     if (user == null) throw Exception('User not authenticated');
@@ -98,6 +110,7 @@ class AlarmCircleService {
   }
 
   // Get user's active circles
+  // Returns all of the alarm circles the user is currently a member of
   Stream<List<AlarmCircle>> getUserCircles() {
     final user = _auth.currentUser;
     if (user == null) throw Exception('User not authenticated');
@@ -112,7 +125,10 @@ class AlarmCircleService {
             .toList());
   }
 
-  // Leave a circle
+  // Function to Leave a circle
+  // [circleId] is the ID of the circle to leave
+  // When a user leaves the circle, they are removed from the member list
+  // Further, their status in the group is updated locally and in firestore
   Future<void> leaveCircle(String circleId) async {
     final user = _auth.currentUser;
     if (user == null) throw Exception('User not authenticated');

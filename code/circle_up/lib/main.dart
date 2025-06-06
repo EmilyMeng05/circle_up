@@ -5,21 +5,38 @@ import 'views/auth_modal.dart';
 import 'package:circle_up/auth/auth_provider.dart';
 import 'views/sign_up.dart';
 import 'views/no_group_page.dart';
-import 'views/circle_page.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
-import 'services/alarm_circle_service.dart';
+import 'views/upload_photos.dart';
+import 'services/notification_service.dart';
 
+
+/*
+ * This represents the main entry point of the Circle Up Application
+*/
 void main() async {
-  await dotenv.load(fileName: ".env");
+  // Load the .env file in order to access any of the environment variables
+  await dotenv.load(fileName: ".env"); 
+
+  
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Firebase with the current platform's options
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  // Initialize the notification servicce
+  // Request any notification permissions if required
+  await NotificationService().initNotification();
+  await NotificationService().requestNotificationPermission();
   runApp(const MyApp());
 }
 
-/// Main application widget that provides the root of the app.
+/*
+ * Represents the main widget to build the Circle Up Application
+ * Sets up all of the routes, and defaults to the login page for the application
+*/
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -29,52 +46,19 @@ class MyApp extends StatelessWidget {
       create: (context) => AuthProvider(),
       child: MaterialApp(
         title: 'Circle Up',
+        debugShowCheckedModeBanner: false,
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         ),
-        initialRoute: '/login',
+        initialRoute: '/login', // Default the route to the login page
+
+        // Defines the routes for the application
         routes: {
           '/login': (context) => AuthModal(),
           '/signUp': (context) => SignUp(),
           '/noGroup': (context) => const NoGroupPage(),
+          '/photo' : (context) => UploadPhotos(),
         },
-        home: Consumer<AuthProvider>(
-          builder: (context, authProvider, _) {
-            return FutureBuilder<void>(
-              future: authProvider.checkAuthState(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                if (!authProvider.isAuthenticated) {
-                  return AuthModal();
-                }
-
-                // If authenticated, check group status
-                if (authProvider.isInGroup) {
-                  // Get the user's circle and navigate to CirclePage
-                  return FutureBuilder(
-                    future: AlarmCircleService().getUserCircles().first,
-                    builder: (context, circleSnapshot) {
-                      if (circleSnapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-
-                      if (!circleSnapshot.hasData || circleSnapshot.data!.isEmpty) {
-                        return const NoGroupPage();
-                      }
-
-                      return CirclePage(circle: circleSnapshot.data!.first);
-                    },
-                  );
-                }
-
-                return const NoGroupPage();
-              },
-            );
-          },
-        ),
       ),
     );
   }

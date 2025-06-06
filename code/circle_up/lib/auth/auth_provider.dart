@@ -20,6 +20,11 @@ class AuthProvider extends ChangeNotifier {
   AppUser? get user => _user; // This is the one you'll use to get displayName, photoUrl, etc.
   User? get firebaseUser => FirebaseAuth.instance.currentUser; // Raw Firebase user object
 
+
+  /// Signs in an existing user with their email and password
+  /// [email] - User's email address
+  /// [password] - User's password
+  /// If there is an error during sign-in, throw error
   Future<void> signIn(String email, String password) async {
     try {
       await _auth.signIn(email, password); // Sign in with Firebase Auth
@@ -48,6 +53,10 @@ class AuthProvider extends ChangeNotifier {
 
 
   /// Signs up a new user and creates a corresponding Firestore user document
+  /// [email] - User's email address
+  /// [password] - User's password
+  /// [username] - User's chosen username (Display Name)
+  /// If there is an error during sign-up, throw error
   Future<void> signUp(String email, String password, String username) async {
     try {
       await _auth.signUp(email, password); // FirebaseAuth

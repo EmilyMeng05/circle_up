@@ -7,6 +7,10 @@ import '../services/alarm_circle_service.dart';
 import 'circle_page.dart';
 import '../services/notification_service.dart';
 
+/*
+ * Represetns the page displayed when the user is not part of the group as a stateful widget
+ * If a user signs up, or they had left a group, this page will be displayed
+*/
 class NoGroupPage extends StatefulWidget {
   const NoGroupPage({super.key});
 
@@ -20,12 +24,16 @@ class _NoGroupPageState extends State<NoGroupPage> {
   final AlarmCircleService _circleService = AlarmCircleService();
   bool _isLoading = false;
 
+  /// Formats a time of day into a string representation of time
   String _formatTimeOfDay(TimeOfDay time) {
     final hour = time.hourOfPeriod == 0 ? 12 : time.hourOfPeriod;
     final period = time.period == DayPeriod.am ? 'AM' : 'PM';
     return '${hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')} $period';
   }
 
+  /// This will open a time picker widget for the user to select an alarm time
+  /// Based on the selected time, the value will be updated accordingly
+  /// Thus, when the user creates a circle, the alarm time will be set to the selected time
   Future<void> _selectTime(BuildContext context) async {
     final TimeOfDay? picked = await showTimePicker(
       context: context,

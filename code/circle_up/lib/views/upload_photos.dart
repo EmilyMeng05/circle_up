@@ -6,6 +6,11 @@ import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:circle_up/photos/photo.dart';
 import 'package:circle_up/components/enter_button.dart';
 
+/*
+ * Represents the class that handles uploading user photos as a StatefulWidget.
+ * This widget allows users to select photos from their gallery or take new photos with the camera.
+ * It provides functionality to undo and redo photo selections, and upload the selected photo to Firebase Storage.
+*/
 class UploadPhotos extends StatefulWidget {
   const UploadPhotos({super.key});
 
@@ -104,6 +109,7 @@ class _UploadPhotosState extends State<UploadPhotos> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            // Displays the selected photo or a placeholder if no photo is selected
             Semantics(
               label: _photo == null
                   ? 'No image selected'
@@ -119,6 +125,7 @@ class _UploadPhotosState extends State<UploadPhotos> {
                     ),
             ),
             const SizedBox(height: 20),
+            // Button to select a photo from the gallery
             Semantics(
               label: 'Select photo from gallery',
               button: true,
@@ -128,6 +135,7 @@ class _UploadPhotosState extends State<UploadPhotos> {
               ),
             ),
             const SizedBox(height: 20),
+            // Button to take a photo with the camera
             Semantics(
               label: 'Take photo with camera',
               button: true,
@@ -137,6 +145,8 @@ class _UploadPhotosState extends State<UploadPhotos> {
               ),
             ),
             const SizedBox(height: 20),
+            // If there is a photo selected, displays the upload button
+            // On click, uploads the photo to Firebase Storage
             if (_photo != null)
               Semantics(
                 label: 'Upload selected photo',
