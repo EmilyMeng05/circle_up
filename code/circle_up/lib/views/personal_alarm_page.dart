@@ -4,6 +4,7 @@ import '../components/enter_button.dart';
 
 /// A page that allows users to set and manage their personal alarm time.
 class PersonalAlarmPage extends StatefulWidget {
+  /// constructor for the class
   const PersonalAlarmPage({super.key});
 
   @override
@@ -89,6 +90,11 @@ class _PersonalAlarmPageState extends State<PersonalAlarmPage> {
   }
 
   /// Builds the main page for the personal alarm page.
+  /// Returns: 
+  /// - a semantic label that contains the following: 
+  /// a header and instruction text for how to set up the alarm
+  /// a time display box that opens the time picker
+  /// a button to save the selected time 
   @override
   Widget build(BuildContext context) {
     return Semantics(

@@ -1,5 +1,3 @@
-// This will have the sign-up logic for the application
-
 import 'package:flutter/material.dart';
 import 'package:circle_up/components/text_field.dart';
 import 'package:circle_up/components/enter_button.dart';
@@ -10,6 +8,8 @@ import 'package:circle_up/views/circle_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+/// This class will have the sign-up logic for the application
+/// including collecting user's email, password, and displayname
 class SignUp extends StatelessWidget {
   SignUp({super.key});
 
@@ -63,6 +63,11 @@ class SignUp extends StatelessWidget {
     }
   }
 
+  ///The build method to build the widget 
+  ///this ui contains dields for display name, email, and password
+  ///will also give user a sign up button, and a link to the login page
+  ///Returns: 
+  ///- a scaffod object that builds the view described as above
   @override
   Widget build(BuildContext context) {
     return Scaffold(

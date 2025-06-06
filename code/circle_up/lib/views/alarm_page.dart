@@ -4,18 +4,25 @@ import 'package:flutter/material.dart';
 /// This page checks the time, and once it matches the alarm time,
 /// it shows an alarm message and navigates to the photo upload page.
 class AlarmPage extends StatefulWidget {
+  /// the target alarm time the app should wait for
   final DateTime alarmTime;
-
+  /// the constructor for this class
+  /// Parameters: 
+  /// - alarmTime: the time at which the alarm should trigger
   const AlarmPage({super.key, required this.alarmTime});
 
+  /// creates the mutable state for this widget
   @override
   State<AlarmPage> createState() => _AlarmPageState();
 }
 
+/// This class is responsible for tracking whether the alarm
+/// has been triggered and managed the timer to check the current time
 class _AlarmPageState extends State<AlarmPage> {
   late Timer _timer;
   bool _alarmTriggered = false;
 
+  /// initializes the timer to begin checking the current time vs. the alarm time
   @override
   void initState() {
     super.initState();
@@ -32,7 +39,6 @@ class _AlarmPageState extends State<AlarmPage> {
         setState(() {
           _alarmTriggered = true;
         });
-
         Future.delayed(const Duration(seconds: 10), () {
           if (mounted) {
             Navigator.pushReplacementNamed(context, '/uploadPhoto');
@@ -44,13 +50,18 @@ class _AlarmPageState extends State<AlarmPage> {
     });
   }
 
+  // Clean up timer when widget is disposed
   @override
   void dispose() {
-    // Clean up timer when widget is disposed
     _timer.cancel();
     super.dispose();
   }
 
+  /// The build method that creates the alarm page widget
+  /// before alarm triggers, shows a waiting message
+  /// once triggered, shows a redthemed alarm page with instructions to stop the alar,
+  /// Returns: 
+  /// - returns a semantic label that contains the alarm widget
   @override
   Widget build(BuildContext context) {
     return Semantics(

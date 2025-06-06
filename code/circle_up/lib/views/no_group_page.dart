@@ -12,6 +12,7 @@ import '../services/notification_service.dart';
  * If a user signs up, or they had left a group, this page will be displayed
 */
 class NoGroupPage extends StatefulWidget {
+  /// constructor for the class
   const NoGroupPage({super.key});
 
   @override
