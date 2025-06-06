@@ -10,12 +10,17 @@ class EnterButton extends StatelessWidget {
   /// The callback function to be executed when the button is tapped
   final Function()? onTap;
 
-  /// Creates an EnterButton widget
-  ///
-  /// [text] is required and specifies the button label
-  /// [onTap] is required and specifies the action to perform when pressed
+  /// the constructor for the enterbutton class
+  /// Parameters: 
+  /// - text: The button label.
+  /// - onTap: The function to execute on tap
   const EnterButton({super.key, required this.onTap, required this.text});
 
+  /// The build method that creates the widget for the class
+  /// Parameters: 
+  /// - context: the build context from flutter's widget tree
+  /// Returns: a semantic labels with a button with full-width layout, 
+  /// black background, white text, and rounded corners. 
   @override
   Widget build(BuildContext context) {
     return Semantics(

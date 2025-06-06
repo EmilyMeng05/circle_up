@@ -8,11 +8,11 @@ class CustomTextField extends StatelessWidget {
   final String hintText;
   final bool obscureText;
 
-  /// Creates a CustomTextField widget
-  ///
-  /// [controller] is required and manages the text field's content
-  /// [hintText] is required and specifies the placeholder text
-  /// [obscureText] is required and determines if the text should be hidden
+  /// The constructor for the customTextfield class
+  /// Parameters: 
+  /// - controller: manages the text field's content
+  /// - hintText: specifies the placeholder text
+  /// - obscureText: determines if the text should be hidden
   const CustomTextField({
     super.key,
     required this.controller,
@@ -20,6 +20,11 @@ class CustomTextField extends StatelessWidget {
     required this.obscureText,
   });
 
+  /// The build method that creates the text field widget
+  /// Returns: 
+  /// - a padded Textfield with semantic labels,
+  /// the text has light grey background and obscure text option for password
+  /// white border when inactive and greyy border when focused
   @override
   Widget build(BuildContext context) {
     return Padding(
