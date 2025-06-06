@@ -14,8 +14,21 @@ class NotificationService {
   Future<void> initNotification() async {
     if (_isInitialized) return;
 
+    // android initialization settings
     const initAndroidSettings = AndroidInitializationSettings(
       'mipmap/ic_launcher',
+    );
+
+    // iOS-specific initialization settings
+    final DarwinInitializationSettings initIOSSettings = DarwinInitializationSettings(
+      requestAlertPermission: true,
+      requestBadgePermission: true,
+      requestSoundPermission: true,
+    );
+
+    final InitializationSettings initSettings = InitializationSettings(
+      android: initAndroidSettings,
+      iOS: initIOSSettings,
     );
 
     // Initialize timezone
@@ -23,10 +36,9 @@ class NotificationService {
     final String currentTimeZone = await FlutterTimezone.getLocalTimezone();
     tz.setLocalLocation(tz.getLocation(currentTimeZone));
 
-    const initSettings = InitializationSettings(android: initAndroidSettings);
-
     await notifPlugin.initialize(initSettings);
   }
+
 
   NotificationDetails notificationDetails() {
     return const NotificationDetails(
