@@ -41,94 +41,149 @@ class _NoGroupPageState extends State<NoGroupPage> {
   Future<void> _createCircle() async {
     setState(() => _isLoading = true);
     try {
-      // Convert TimeOfDay to DateTime
       final now = DateTime.now();
-      final alarmTime = DateTime(
-        now.year,
-        now.month,
-        now.day,
-        selectedTime.hour,
-        selectedTime.minute,
-      );
-
+      final alarmTime = DateTime(now.year, now.month, now.day, selectedTime.hour, selectedTime.minute);
       final circle = await _circleService.createCircle(alarmTime);
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Circle created! Code: ${circle.code}'),
-            duration: const Duration(seconds: 5),
-          ),
-        );
-        
-
-        NotificationService().scheduleNotification(
-          id: circle.hashCode,
-          title: 'Circle Up Alarm',
-          body: 'Your circle alarm is set for ${_formatTimeOfDay(selectedTime)}',
-          hour: selectedTime.hour,
-          minute: selectedTime.minute,
-        );
-
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => CirclePage(circle: circle),
-          ),
-        );
-      }
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Circle created! Code: ${circle.code}'), duration: const Duration(seconds: 5)),
+      );
+      NotificationService().scheduleNotification(
+        id: circle.hashCode,
+        title: 'Circle Up Alarm',
+        body: 'Your circle alarm is set for ${_formatTimeOfDay(selectedTime)}',
+        hour: selectedTime.hour,
+        minute: selectedTime.minute,
+      );
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => CirclePage(circle: circle)));
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${e.toString()}')),
-        );
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
       }
     } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
   Future<void> _joinCircle() async {
     if (circleCodeController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a circle code')),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please enter a circle code')));
       return;
     }
-
     setState(() => _isLoading = true);
     try {
       final circle = await _circleService.joinCircle(circleCodeController.text);
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Successfully joined circle!')),
-        );
-        
-        NotificationService().scheduleNotification(
-          id: circle.hashCode,
-          title: 'Circle Up Alarm',
-          body: 'You have joined a circle with alarm set for ${_formatTimeOfDay(selectedTime)}',
-          hour: selectedTime.hour,
-          minute: selectedTime.minute,
-        );
-
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => CirclePage(circle: circle),
-          ),
-        );
-      }
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Successfully joined circle!')));
+      NotificationService().scheduleNotification(
+        id: circle.hashCode,
+        title: 'Circle Up Alarm',
+        body: 'You have joined a circle with alarm set for ${_formatTimeOfDay(selectedTime)}',
+        hour: selectedTime.hour,
+        minute: selectedTime.minute,
+      );
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => CirclePage(circle: circle)));
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${e.toString()}')),
-        );
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
       }
     } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
+      if (mounted) setState(() => _isLoading = false);
     }
+  }
+
+  Widget _buildAlarmTimeSection() {
+    return Semantics(
+      container: true,
+      label: 'Set alarm time',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Set Alarm Time', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
+          const SizedBox(height: 20),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color.fromRGBO(158, 158, 158, 0.2),
+                  spreadRadius: 1,
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Semantics(
+                  label: 'Selected alarm time is ${_formatTimeOfDay(selectedTime)}',
+                  child: Text(
+                    _formatTimeOfDay(selectedTime),
+                    style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Semantics(
+                  label: 'Select alarm time',
+                  button: true,
+                  child: IconButton(
+                    icon: const Icon(Icons.access_time),
+                    onPressed: _isLoading ? null : () => _selectTime(context),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCircleActionsSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Semantics(
+          header: true,
+          child: const Text('Create New Circle', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
+        ),
+        const SizedBox(height: 20),
+        Semantics(
+          label: 'Button to create new circle',
+          button: true,
+          child: EnterButton(
+            onTap: _isLoading ? null : _createCircle,
+            text: 'Create New Circle',
+          ),
+        ),
+        const SizedBox(height: 40),
+        Semantics(
+          header: true,
+          child: const Text('Join Existing Circle', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
+        ),
+        const SizedBox(height: 20),
+        Semantics(
+          label: 'Enter circle code',
+          textField: true,
+          child: CustomTextField(
+            controller: circleCodeController,
+            hintText: 'Enter Circle Code',
+            obscureText: false,
+          ),
+        ),
+        const SizedBox(height: 20),
+        Semantics(
+          label: 'Button to join circle',
+          button: true,
+          child: EnterButton(
+            onTap: _isLoading ? null : _joinCircle,
+            text: 'Join Circle',
+          ),
+        ),
+      ],
+    );
   }
 
   @override
@@ -142,93 +197,17 @@ class _NoGroupPageState extends State<NoGroupPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              /// added their username 
-              Text(
-                'Welcome to Circle Up, ${user?.displayName ?? 'User'}',
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
+              Semantics(
+                header: true,
+                child: Text(
+                  'Welcome to Circle Up, ${user?.displayName ?? 'User'}',
+                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
               ),
               const SizedBox(height: 40),
-
-              // Alarm Time Section
-              const Text(
-                'Set Alarm Time',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(height: 20),
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                  boxShadow: [
-                    BoxShadow(
-                      // ignore: deprecated_member_use
-                      color: Colors.grey.withOpacity(0.2),
-                      spreadRadius: 1,
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      _formatTimeOfDay(selectedTime),
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.access_time),
-                      onPressed: _isLoading ? null : () => _selectTime(context),
-                    ),
-                  ],
-                ),
-              ),
+              _buildAlarmTimeSection(),
               const SizedBox(height: 40),
-
-              // Create New Circle Section
-              const Text(
-                'Create New Circle',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(height: 20),
-              EnterButton(
-                onTap: _isLoading ? null : _createCircle,
-                text: 'Create New Circle',
-              ),
-              const SizedBox(height: 40),
-
-              // Join Circle Section
-              const Text(
-                'Join Existing Circle',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(height: 20),
-              CustomTextField(
-                controller: circleCodeController,
-                hintText: 'Enter Circle Code',
-                obscureText: false,
-              ),
-              const SizedBox(height: 20),
-              EnterButton(
-                onTap: _isLoading ? null : _joinCircle,
-                text: 'Join Circle',
-              ),
+              _buildCircleActionsSection(),
               if (_isLoading)
                 const Padding(
                   padding: EdgeInsets.only(top: 20),

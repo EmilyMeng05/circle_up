@@ -52,38 +52,49 @@ class _AlarmPageState extends State<AlarmPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: _alarmTriggered ? Colors.red[100] : Colors.grey[200],
-      body: Center(
-        child: _alarmTriggered
-            ? Semantics(
-                label: 'Alarm triggered. Time to upload your morning selfie.',
-                liveRegion: true,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Semantics(
-                      label: 'Alarm icon',
-                      child: Icon(Icons.alarm, size: 150, color: Colors.red[900]),
-                    ),
-                    const SizedBox(height: 20),
-                    const Text(
-                      'ALARM!',
-                      style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 10),
-                    const Text('Get ready to upload your morning selfie!'),
-                  ],
+    return Semantics(
+      label: _alarmTriggered
+          ? 'Alarm triggered page. Time to upload your morning selfie.'
+          : 'Alarm page. Waiting for alarm time.',
+      child: Scaffold(
+        backgroundColor: _alarmTriggered ? Colors.red[100] : Colors.grey[200],
+        body: Center(
+          child: _alarmTriggered
+              ? Semantics(
+                  label: 'Alarm triggered. Time to upload your morning selfie.',
+                  liveRegion: true,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Semantics(
+                        label: 'Alarm icon',
+                        child: Icon(Icons.alarm, size: 150, color: Colors.red[900]),
+                      ),
+                      const SizedBox(height: 20),
+                      Semantics(
+                        label: 'Alarm!',
+                        child: Text(
+                          'ALARM!',
+                          style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Semantics(
+                        label: 'Get ready to upload your morning selfie!',
+                        child: Text('Get ready to upload your morning selfie!'),
+                      ),
+                    ],
+                  ),
+                )
+              : Semantics(
+                  label: 'Waiting for alarm time.',
+                  liveRegion: true,
+                  child: Text(
+                    'Waiting for alarm time...',
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
+                  ),
                 ),
-              )
-              //semantic labels
-            : Semantics(
-                label: 'Waiting for alarm time.',
-                child: Text(
-                  'Waiting for alarm time...',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
-                ),
-              ),
+        ),
       ),
     );
   }

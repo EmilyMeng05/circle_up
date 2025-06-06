@@ -73,55 +73,78 @@ class SignUp extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const SizedBox(height: 50),
-              const Icon(Icons.alarm, size: 100, color: Colors.black),
+              Semantics(
+                label: 'Alarm Icon',
+                child: Icon(Icons.alarm, size: 100, color: Colors.black),
+              ),
               const SizedBox(height: 20),
-              const Text('Welcome to Circle Up, Please sign up'),
+              Semantics(
+                label: 'Welcome to Circle Up, Please sign up',
+                child: Text('Welcome to Circle Up, Please sign up'),
+              ),
               const SizedBox(height: 20),
               // ask about their username
-              CustomTextField(
-                controller: usernameController,
-                hintText: 'Display Name',
-                obscureText: false,
+              Semantics(
+                label: 'Display Name Field',
+                child: CustomTextField(
+                  controller: usernameController,
+                  hintText: 'Display Name',
+                  obscureText: false,
+                ),
               ),
               const SizedBox(height: 10),
-              CustomTextField(
-                controller: emailController,
-                hintText: 'Email',
-                obscureText: false,
+              Semantics(
+                label: 'Email Field',
+                child: CustomTextField(
+                  controller: emailController,
+                  hintText: 'Email',
+                  obscureText: false,
+                ),
               ),
               const SizedBox(height: 10),
-              CustomTextField(
-                controller: passwordController,
-                hintText: 'Password',
-                obscureText: true,
+              Semantics(
+                label: 'Password Field',
+                child: CustomTextField(
+                  controller: passwordController,
+                  hintText: 'Password',
+                  obscureText: true,
+                ),
               ),
               const SizedBox(height: 20),
 
-              EnterButton(
-                onTap: () async {
-                  try {
-                    await _handleSignUp(context);
-                  } catch (e) {
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Error signing up: $e')),
-                      );
+              Semantics(
+                label: 'Sign Up Button',
+                button: true,
+                child: EnterButton(
+                  onTap: () async {
+                    try {
+                      await _handleSignUp(context);
+                    } catch (e) {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Error signing up: $e')),
+                        );
+                      }
                     }
-                  }
-                },
-                text: 'Sign Up',
+                  },
+                  text: 'Sign Up',
+                ),
               ),
               const SizedBox(height: 20),
-              GestureDetector(
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.pushNamed(context, '/login');
-                },
-                child: const Text(
-                  'Already have an account? Log In',
-                  style: TextStyle(
-                    color: Colors.black,
-                    decoration: TextDecoration.underline,
+              Semantics(
+                label: 'Already have an account? Log In',
+                button: true,
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.pushNamed(context, '/login');
+                  },
+                  child: const Text(
+                    'Already have an account? Log In',
+                    style: TextStyle(
+                      color: Colors.black,
+                      decoration: TextDecoration.underline,
+                    ),
                   ),
                 ),
               ),

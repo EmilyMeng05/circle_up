@@ -53,7 +53,6 @@ class _PersonalAlarmPageState extends State<PersonalAlarmPage> {
   Future<void> _saveAlarmTime() async {
     setState(() => _isLoading = true);
     try {
-      // Convert TimeOfDay to DateTime
       final now = DateTime.now();
       final alarmTime = DateTime(
         now.year,
@@ -95,68 +94,72 @@ class _PersonalAlarmPageState extends State<PersonalAlarmPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Set Your Personal Alarm',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
+            Semantics(
+              header: true,
+              child: const Text(
+                'Set Your Personal Alarm',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
             ),
             const SizedBox(height: 40),
-
-            // Alarm Time Section
-            const Text(
-              'Alarm Time',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
+            Semantics(
+              header: true,
+              child: const Text(
+                'Alarm Time',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
               ),
             ),
             const SizedBox(height: 20),
-            GestureDetector(
-              onTap: () => _selectTime(context),
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                  boxShadow: [
-                    BoxShadow(
-                      // ignore: deprecated_member_use
-                      color: Colors.grey.withOpacity(0.2),
-                      spreadRadius: 1,
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        const Icon(Icons.access_time, size: 24),
-                        const SizedBox(width: 10),
-                        Text(
-                          _formatTimeOfDay(_selectedTime),
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w500,
+            Semantics(
+              label: 'Selected alarm time is ${''}',
+              button: true,
+              onTapHint: 'Tap to select alarm time',
+              child: GestureDetector(
+                onTap: () => _selectTime(context),
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color.fromRGBO(158, 158, 158, 0.2),
+                        spreadRadius: 1,
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(Icons.access_time, size: 24, semanticLabel: 'Alarm time icon'),
+                          const SizedBox(width: 10),
+                          Text(
+                            _formatTimeOfDay(_selectedTime),
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    const Icon(Icons.arrow_forward_ios, size: 16),
-                  ],
+                        ],
+                      ),
+                      const Icon(Icons.arrow_forward_ios, size: 16),
+                    ],
+                  ),
                 ),
               ),
             ),
             const SizedBox(height: 40),
-
-            // Save Button
-            EnterButton(
-              onTap: _isLoading ? null : _saveAlarmTime,
-              text: _isLoading ? 'Saving...' : 'Save Alarm Time',
+            Semantics(
+              label: 'Save alarm time',
+              button: true,
+              child: EnterButton(
+                onTap: _isLoading ? null : _saveAlarmTime,
+                text: _isLoading ? 'Saving...' : 'Save Alarm Time',
+              ),
             ),
           ],
         ),

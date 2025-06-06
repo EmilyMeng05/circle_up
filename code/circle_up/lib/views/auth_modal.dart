@@ -1,7 +1,5 @@
 // This will be the authentication modal that will be used to either sign in OR sign up a user
 
-// If the user is already signed-up, they can sign in
-// otherwise, they can sign up
 import 'package:flutter/material.dart';
 import 'package:circle_up/components/text_field.dart';
 import 'package:circle_up/components/enter_button.dart';
@@ -54,47 +52,69 @@ class AuthModal extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(height: 50),
-              Icon(Icons.alarm, size: 100, color: Colors.black),
-              SizedBox(height: 20),
-              Text('Welcome back to Circle Up, Please Log in'),
-              SizedBox(height: 20),
-              CustomTextField(
-                controller: emailController,
-                hintText: 'Email',
-                obscureText: false,
+              const SizedBox(height: 50),
+              Semantics(
+                label: 'Alarm Icon',
+                child: const Icon(Icons.alarm, size: 100, color: Colors.black),
               ),
-              SizedBox(height: 10),
-              CustomTextField(
-                controller: passwordController,
-                hintText: 'Password',
-                obscureText: true,
+              const SizedBox(height: 20),
+              Semantics(
+                label: 'Welcome back to Circle Up, Please Log in',
+                child: const Text('Welcome back to Circle Up, Please Log in'),
               ),
-              SizedBox(height: 20),
-              EnterButton(
-                onTap: () async {
-                  try {
-                    await _handleLogin(context);
-                  } catch (e) {
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Login failed: $e')),
-                      );
+              const SizedBox(height: 20),
+              Semantics(
+                label: 'Email input field',
+                textField: true,
+                child: CustomTextField(
+                  controller: emailController,
+                  hintText: 'Email',
+                  obscureText: false,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Semantics(
+                label: 'Password input field',
+                textField: true,
+                child: CustomTextField(
+                  controller: passwordController,
+                  hintText: 'Password',
+                  obscureText: true,
+                ),
+              ),
+              const SizedBox(height: 20),
+              Semantics(
+                label: 'Login button',
+                button: true,
+                child: EnterButton(
+                  onTap: () async {
+                    try {
+                      await _handleLogin(context);
+                    } catch (e) {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Login failed: $e')),
+                        );
+                      }
                     }
-                  }
-                },
-                text: 'Login',
+                  },
+                  text: 'Login',
+                ),
               ),
-              SizedBox(height: 20),
-              GestureDetector(
-                onTap: () {
-                  Navigator.pushNamed(context, '/signUp');
-                },
-                child: Text(
-                  'Don\'t have an account? Sign Up',
-                  style: TextStyle(
-                    color: Colors.black,
-                    decoration: TextDecoration.underline,
+              const SizedBox(height: 20),
+              Semantics(
+                label: 'Don\'t have an account? Sign Up link',
+                button: true,
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(context, '/signUp');
+                  },
+                  child: const Text(
+                    'Don\'t have an account? Sign Up',
+                    style: TextStyle(
+                      color: Colors.black,
+                      decoration: TextDecoration.underline,
+                    ),
                   ),
                 ),
               ),
