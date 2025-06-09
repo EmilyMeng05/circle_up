@@ -7,21 +7,24 @@ class CustomTextField extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
   final bool obscureText;
+  final Widget? prefixIcon;
 
   /// The constructor for the customTextfield class
-  /// Parameters: 
+  /// Parameters:
   /// - controller: manages the text field's content
   /// - hintText: specifies the placeholder text
   /// - obscureText: determines if the text should be hidden
+  /// - prefixIcon: optional prefix icon to be displayed before the text field
   const CustomTextField({
     super.key,
     required this.controller,
     required this.hintText,
     required this.obscureText,
+    this.prefixIcon,
   });
 
   /// The build method that creates the text field widget
-  /// Returns: 
+  /// Returns:
   /// - a padded Textfield with semantic labels,
   /// the text has light grey background and obscure text option for password
   /// white border when inactive and greyy border when focused
@@ -36,15 +39,20 @@ class CustomTextField extends StatelessWidget {
           controller: controller,
           obscureText: obscureText,
           decoration: InputDecoration(
-            enabledBorder: const OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.white),
+            prefixIcon: prefixIcon,
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.grey.shade300),
+              borderRadius: BorderRadius.circular(12),
             ),
             focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.grey.shade400),
+              borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+              borderRadius: BorderRadius.circular(12),
             ),
-            fillColor: Colors.grey.shade200,
+            fillColor: Colors.white,
             filled: true,
             hintText: hintText,
+            hintStyle: TextStyle(color: Colors.grey.shade400),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           ),
         ),
       ),

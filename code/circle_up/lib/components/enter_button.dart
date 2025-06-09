@@ -10,17 +10,26 @@ class EnterButton extends StatelessWidget {
   /// The callback function to be executed when the button is tapped
   final Function()? onTap;
 
+  /// The background color of the button
+  final Color? backgroundColor;
+
   /// the constructor for the enterbutton class
-  /// Parameters: 
+  /// Parameters:
   /// - text: The button label.
   /// - onTap: The function to execute on tap
-  const EnterButton({super.key, required this.onTap, required this.text});
+  /// - backgroundColor: The background color of the button
+  const EnterButton({
+    super.key,
+    required this.onTap,
+    required this.text,
+    this.backgroundColor,
+  });
 
   /// The build method that creates the widget for the class
-  /// Parameters: 
+  /// Parameters:
   /// - context: the build context from flutter's widget tree
-  /// Returns: a semantic labels with a button with full-width layout, 
-  /// black background, white text, and rounded corners. 
+  /// Returns: a semantic labels with a button with full-width layout,
+  /// black background, white text, and rounded corners.
   @override
   Widget build(BuildContext context) {
     return Semantics(
@@ -38,12 +47,27 @@ class EnterButton extends StatelessWidget {
           margin: const EdgeInsets.symmetric(horizontal: 20.0),
           // Style the button container
           decoration: BoxDecoration(
-            color: Colors.black,
-            borderRadius: BorderRadius.circular(10.0),
+            color: backgroundColor ?? Theme.of(context).colorScheme.primary,
+            borderRadius: BorderRadius.circular(12.0),
+            boxShadow: [
+              BoxShadow(
+                color: (backgroundColor ?? Theme.of(context).colorScheme.primary).withOpacity(0.3),
+                spreadRadius: 1,
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
           // Center the text within the button
           child: Center(
-            child: Text(text, style: TextStyle(color: Colors.white)),
+            child: Text(
+              text,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ),
         ),
       ),

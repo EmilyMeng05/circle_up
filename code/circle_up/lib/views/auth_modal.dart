@@ -11,7 +11,7 @@ import 'package:circle_up/views/circle_page.dart';
 /*
  * Represents the Login modal for the circle up application as a StatelessWidget
  * If the user enters this modal, they will be prompted to login to the application
- * If the user is not signed up to the application, they can navigate to the sign up page 
+ * If the user is not signed up to the application, they can navigate to the sign up page
 */
 class AuthModal extends StatelessWidget {
   AuthModal({super.key});
@@ -65,52 +65,58 @@ class AuthModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[300],
       body: SafeArea(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const SizedBox(height: 50),
-              Semantics(
-                label: 'Alarm Icon',
-                child: const Icon(Icons.alarm, size: 100, color: Colors.black),
-              ),
-              const SizedBox(height: 20),
-              Semantics(
-                label: 'Welcome back to Circle Up, Please Log in',
-                child: const Text('Welcome back to Circle Up, Please Log in'),
-              ),
-              const SizedBox(height: 20),
-              // Input fields for the email
-              Semantics(
-                label: 'Email input field',
-                textField: true,
-                child: CustomTextField(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const SizedBox(height: 60),
+                Icon(
+                  Icons.alarm,
+                  size: 80,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  'Welcome back to Circle Up! 👋',
+                  style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Let\'s get you back to your morning routine',
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 40),
+                CustomTextField(
                   controller: emailController,
                   hintText: 'Email',
                   obscureText: false,
+                  prefixIcon: Icon(
+                    Icons.email_outlined,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 10),
-              // Input fields for the password
-              Semantics(
-                label: 'Password input field',
-                textField: true,
-                child: CustomTextField(
+                const SizedBox(height: 16),
+                CustomTextField(
                   controller: passwordController,
                   hintText: 'Password',
                   obscureText: true,
+                  prefixIcon: Icon(
+                    Icons.lock_outline,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 20),
-              // Represents the login button
-              // When the button is clicked, it will try to login the user
-              // If there is an error, displays the error in a snackbar
-              Semantics(
-                label: 'Login button',
-                button: true,
-                child: EnterButton(
+                const SizedBox(height: 32),
+                EnterButton(
                   onTap: () async {
                     try {
                       await _handleLogin(context);
@@ -123,27 +129,25 @@ class AuthModal extends StatelessWidget {
                     }
                   },
                   text: 'Login',
+                  backgroundColor: Theme.of(context).colorScheme.primary,
                 ),
-              ),
-              const SizedBox(height: 20),
-              // Using this gesture detector, the user can navigate to the sign up page if they do not have an account
-              Semantics(
-                label: 'Don\'t have an account? Sign Up link',
-                button: true,
-                child: GestureDetector(
+                const SizedBox(height: 24),
+                GestureDetector(
                   onTap: () {
                     Navigator.pushNamed(context, '/signUp');
                   },
-                  child: const Text(
+                  child: Text(
                     'Don\'t have an account? Sign Up',
                     style: TextStyle(
-                      color: Colors.black,
+                      color: Theme.of(context).colorScheme.secondary,
                       decoration: TextDecoration.underline,
+                      fontSize: 16,
                     ),
+                    textAlign: TextAlign.center,
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

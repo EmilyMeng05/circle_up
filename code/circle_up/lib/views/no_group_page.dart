@@ -114,39 +114,43 @@ class _NoGroupPageState extends State<NoGroupPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Set Alarm Time', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
+          Text(
+            'Set Alarm Time',
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ),
           const SizedBox(height: 20),
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: const Color.fromRGBO(158, 158, 158, 0.2),
-                  spreadRadius: 1,
-                  blurRadius: 4,
-                  offset: const Offset(0, 2),
+                  color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                  spreadRadius: 2,
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
                 ),
               ],
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Semantics(
-                  label: 'Selected alarm time is ${_formatTimeOfDay(selectedTime)}',
-                  child: Text(
-                    _formatTimeOfDay(selectedTime),
-                    style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                Text(
+                  _formatTimeOfDay(selectedTime),
+                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
-                Semantics(
-                  label: 'Select alarm time',
-                  button: true,
-                  child: IconButton(
-                    icon: const Icon(Icons.access_time),
-                    onPressed: _isLoading ? null : () => _selectTime(context),
+                IconButton(
+                  icon: Icon(
+                    Icons.access_time,
+                    color: Theme.of(context).colorScheme.primary,
+                    size: 32,
                   ),
+                  onPressed: _isLoading ? null : () => _selectTime(context),
                 ),
               ],
             ),
@@ -162,42 +166,40 @@ class _NoGroupPageState extends State<NoGroupPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Semantics(
-          header: true,
-          child: const Text('Create New Circle', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
+        Text(
+          'Create New Circle',
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            color: Theme.of(context).colorScheme.primary,
+          ),
         ),
         const SizedBox(height: 20),
-        Semantics(
-          label: 'Button to create new circle',
-          button: true,
-          child: EnterButton(
-            onTap: _isLoading ? null : _createCircle,
-            text: 'Create New Circle',
-          ),
+        EnterButton(
+          onTap: _isLoading ? null : _createCircle,
+          text: 'Create New Circle',
+          backgroundColor: Theme.of(context).colorScheme.primary,
         ),
         const SizedBox(height: 40),
-        Semantics(
-          header: true,
-          child: const Text('Join Existing Circle', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
-        ),
-        const SizedBox(height: 20),
-        Semantics(
-          label: 'Enter circle code',
-          textField: true,
-          child: CustomTextField(
-            controller: circleCodeController,
-            hintText: 'Enter Circle Code',
-            obscureText: false,
+        Text(
+          'Join Existing Circle',
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            color: Theme.of(context).colorScheme.primary,
           ),
         ),
         const SizedBox(height: 20),
-        Semantics(
-          label: 'Button to join circle',
-          button: true,
-          child: EnterButton(
-            onTap: _isLoading ? null : _joinCircle,
-            text: 'Join Circle',
+        CustomTextField(
+          controller: circleCodeController,
+          hintText: 'Enter Circle Code',
+          obscureText: false,
+          prefixIcon: Icon(
+            Icons.group_add,
+            color: Theme.of(context).colorScheme.primary,
           ),
+        ),
+        const SizedBox(height: 20),
+        EnterButton(
+          onTap: _isLoading ? null : _joinCircle,
+          text: 'Join Circle',
+          backgroundColor: Theme.of(context).colorScheme.secondary,
         ),
       ],
     );
@@ -208,30 +210,41 @@ class _NoGroupPageState extends State<NoGroupPage> {
   Widget build(BuildContext context) {
     final user = context.watch<AuthProvider>().user;
     return Scaffold(
-      backgroundColor: Colors.grey[300],
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Semantics(
-                header: true,
-                child: Text(
-                  'Welcome to Circle Up, ${user?.displayName ?? 'User'}',
-                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Welcome to Circle Up, ${user?.displayName ?? 'User'}! 👋',
+                  style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 40),
-              _buildAlarmTimeSection(),
-              const SizedBox(height: 40),
-              _buildCircleActionsSection(),
-              if (_isLoading)
-                const Padding(
-                  padding: EdgeInsets.only(top: 20),
-                  child: Center(child: CircularProgressIndicator()),
+                const SizedBox(height: 8),
+                Text(
+                  'Let\'s start your morning routine journey',
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
                 ),
-            ],
+                const SizedBox(height: 40),
+                _buildAlarmTimeSection(),
+                const SizedBox(height: 40),
+                _buildCircleActionsSection(),
+                if (_isLoading)
+                  const Padding(
+                    padding: EdgeInsets.only(top: 20),
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF6C63FF)),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
           ),
         ),
       ),

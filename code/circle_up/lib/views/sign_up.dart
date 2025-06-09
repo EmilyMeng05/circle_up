@@ -63,64 +63,76 @@ class SignUp extends StatelessWidget {
     }
   }
 
-  ///The build method to build the widget 
+  ///The build method to build the widget
   ///this ui contains dields for display name, email, and password
   ///will also give user a sign up button, and a link to the login page
-  ///Returns: 
+  ///Returns:
   ///- a scaffod object that builds the view described as above
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[300],
       body: SafeArea(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const SizedBox(height: 50),
-              Semantics(
-                label: 'Alarm Icon',
-                child: Icon(Icons.alarm, size: 100, color: Colors.black),
-              ),
-              const SizedBox(height: 20),
-              Semantics(
-                label: 'Welcome to Circle Up, Please sign up',
-                child: Text('Welcome to Circle Up, Please sign up'),
-              ),
-              const SizedBox(height: 20),
-              // ask about their username
-              Semantics(
-                label: 'Display Name Field',
-                child: CustomTextField(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const SizedBox(height: 60),
+                Icon(
+                  Icons.alarm,
+                  size: 80,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  'Join Circle Up! 🌅',
+                  style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Start your morning routine journey with friends',
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 40),
+                CustomTextField(
                   controller: usernameController,
                   hintText: 'Display Name',
                   obscureText: false,
+                  prefixIcon: Icon(
+                    Icons.person_outline,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 10),
-              Semantics(
-                label: 'Email Field',
-                child: CustomTextField(
+                const SizedBox(height: 16),
+                CustomTextField(
                   controller: emailController,
                   hintText: 'Email',
                   obscureText: false,
+                  prefixIcon: Icon(
+                    Icons.email_outlined,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 10),
-              Semantics(
-                label: 'Password Field',
-                child: CustomTextField(
+                const SizedBox(height: 16),
+                CustomTextField(
                   controller: passwordController,
                   hintText: 'Password',
                   obscureText: true,
+                  prefixIcon: Icon(
+                    Icons.lock_outline,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 20),
-
-              Semantics(
-                label: 'Sign Up Button',
-                button: true,
-                child: EnterButton(
+                const SizedBox(height: 32),
+                EnterButton(
                   onTap: () async {
                     try {
                       await _handleSignUp(context);
@@ -133,27 +145,26 @@ class SignUp extends StatelessWidget {
                     }
                   },
                   text: 'Sign Up',
+                  backgroundColor: Theme.of(context).colorScheme.primary,
                 ),
-              ),
-              const SizedBox(height: 20),
-              Semantics(
-                label: 'Already have an account? Log In',
-                button: true,
-                child: GestureDetector(
+                const SizedBox(height: 24),
+                GestureDetector(
                   onTap: () {
                     Navigator.pop(context);
                     Navigator.pushNamed(context, '/login');
                   },
-                  child: const Text(
+                  child: Text(
                     'Already have an account? Log In',
                     style: TextStyle(
-                      color: Colors.black,
+                      color: Theme.of(context).colorScheme.secondary,
                       decoration: TextDecoration.underline,
+                      fontSize: 16,
                     ),
+                    textAlign: TextAlign.center,
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

@@ -48,7 +48,52 @@ class MyApp extends StatelessWidget {
         title: 'Circle Up',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color(0xFF6C63FF),
+            primary: const Color(0xFF6C63FF),
+            secondary: const Color(0xFFFF6584),
+            tertiary: const Color(0xFF4ECDC4),
+            background: const Color(0xFFF7F7F7),
+          ),
+          scaffoldBackgroundColor: const Color(0xFFF7F7F7),
+          cardTheme: CardThemeData(
+            elevation: 4,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            color: Colors.white,
+          ),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF6C63FF),
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          ),
+          textTheme: const TextTheme(
+            headlineLarge: TextStyle(
+              fontSize: 32,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF2D3142),
+            ),
+            headlineMedium: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF2D3142),
+            ),
+            titleLarge: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              color: Color(0xFF2D3142),
+            ),
+            bodyLarge: TextStyle(
+              fontSize: 16,
+              color: Color(0xFF4A4A4A),
+            ),
+          ),
         ),
         initialRoute: '/login', // Default the route to the login page
 
