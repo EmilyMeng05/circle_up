@@ -60,12 +60,11 @@ class _NoGroupPageState extends State<NoGroupPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Circle created! Code: ${circle.code}'), duration: const Duration(seconds: 5)),
       );
-      NotificationService().scheduleNotification(
-        id: circle.hashCode,
-        title: 'Circle Up Alarm',
-        body: 'Your circle alarm is set for ${_formatTimeOfDay(selectedTime)}',
-        hour: selectedTime.hour,
-        minute: selectedTime.minute,
+      NotificationService().scheduleAlarm(
+        circleId: circle.id,
+        circleName: circle.name,
+        alarmTime: alarmTime,
+        prompt: 'Time to share your morning routine!',
       );
       Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => CirclePage(circle: circle)));
     } catch (e) {
@@ -90,12 +89,11 @@ class _NoGroupPageState extends State<NoGroupPage> {
       final circle = await _circleService.joinCircle(circleCodeController.text);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Successfully joined circle!')));
-      NotificationService().scheduleNotification(
-        id: circle.hashCode,
-        title: 'Circle Up Alarm',
-        body: 'You have joined a circle with alarm set for ${_formatTimeOfDay(selectedTime)}',
-        hour: selectedTime.hour,
-        minute: selectedTime.minute,
+      NotificationService().scheduleAlarm(
+        circleId: circle.id,
+        circleName: circle.name,
+        alarmTime: DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, selectedTime.hour, selectedTime.minute),
+        prompt: 'Time to share your morning routine!',
       );
       Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => CirclePage(circle: circle)));
     } catch (e) {

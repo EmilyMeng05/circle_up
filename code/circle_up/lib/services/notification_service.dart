@@ -7,38 +7,51 @@ import 'package:permission_handler/permission_handler.dart';
 /// Service responsible for handling local notifications in the app.
 /// Manages notification permissions, scheduling, and display for alarm reminders.
 class NotificationService {
-  final notifPlugin = FlutterLocalNotificationsPlugin();
+  static final NotificationService _instance = NotificationService._internal();
+  factory NotificationService() => _instance;
+  NotificationService._internal();
+
+  final FlutterLocalNotificationsPlugin _notifications = FlutterLocalNotificationsPlugin();
 
   final bool _isInitialized = false;
   bool get isInitialized => _isInitialized;
 
   // init
-  Future<void> initNotification() async {
+  Future<void> initialize() async {
     if (_isInitialized) return;
 
-    // android initialization settings
-    const initAndroidSettings = AndroidInitializationSettings(
-      'mipmap/ic_launcher',
-    );
+    // Initialize timezone
+    tz.initializeTimeZones();
+    final String timeZoneName = await FlutterTimezone.getLocalTimezone();
+    tz.setLocalLocation(tz.getLocation(timeZoneName));
 
-    // iOS-specific initialization settings
-    final DarwinInitializationSettings initIOSSettings = DarwinInitializationSettings(
+    // Request notification permissions
+    await Permission.notification.request();
+
+    // Initialize notifications
+    const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const iosSettings = DarwinInitializationSettings(
       requestAlertPermission: true,
       requestBadgePermission: true,
       requestSoundPermission: true,
     );
 
-    final InitializationSettings initSettings = InitializationSettings(
-      android: initAndroidSettings,
-      iOS: initIOSSettings,
+    const initSettings = InitializationSettings(
+      android: androidSettings,
+      iOS: iosSettings,
     );
 
-    // Initialize timezone
-    tz.initializeTimeZones();
-    final String currentTimeZone = await FlutterTimezone.getLocalTimezone();
-    tz.setLocalLocation(tz.getLocation(currentTimeZone));
+    await _notifications.initialize(
+      initSettings,
+      onDidReceiveNotificationResponse: _onNotificationTapped,
+    );
+  }
 
-    await notifPlugin.initialize(initSettings);
+  void _onNotificationTapped(NotificationResponse response) {
+    // Handle notification tap - could navigate to the circle feed
+    // This would require a way to communicate with the app's navigation
+    // For now, we'll just print the payload
+    print('Notification tapped: ${response.payload}');
   }
 
   /// Returns the notification details configuration
@@ -67,7 +80,7 @@ class NotificationService {
     String? body,
     String? payload,
   }) async {
-    return notifPlugin.show(id, title, body, notificationDetails());
+    return _notifications.show(id, title, body, notificationDetails());
   }
 
   /// Schedules a notification for a specific time
@@ -77,33 +90,58 @@ class NotificationService {
   /// [body] - Notification message
   /// [hour] - Hour of the day (0-23)
   /// [minute] - Minute of the hour (0-59)
-  Future<void> scheduleNotification({
-    int id = 1,
-    required String title,
-    required String body,
-    required int hour,
-    required int minute,
+  Future<void> scheduleAlarm({
+    required String circleId,
+    required String circleName,
+    required DateTime alarmTime,
+    required String prompt,
   }) async {
-    final now = tz.TZDateTime.now(tz.local);
+    final androidDetails = AndroidNotificationDetails(
+      'alarm_circles',
+      'Alarm Circles',
+      channelDescription: 'Notifications for alarm circles',
+      importance: Importance.high,
+      priority: Priority.high,
+      sound: const RawResourceAndroidNotificationSound('alarm'),
+      playSound: true,
+      enableVibration: true,
+    );
 
-    // Create scheduled date time using current date and specified time
-    var scheduledDateTime = tz.TZDateTime(
-      tz.local,
+    final iosDetails = DarwinNotificationDetails(
+      sound: 'alarm.wav',
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+    );
+
+    final details = NotificationDetails(
+      android: androidDetails,
+      iOS: iosDetails,
+    );
+
+    // Schedule notification for the next occurrence of the alarm time
+    final now = DateTime.now();
+    var scheduledTime = DateTime(
       now.year,
       now.month,
       now.day,
-      hour,
-      minute,
+      alarmTime.hour,
+      alarmTime.minute,
     );
 
-    // Schedule the notification using Android's alarm clock mode for reliability
-    await notifPlugin.zonedSchedule(
-      id,
-      title,
-      body,
-      scheduledDateTime,
-      notificationDetails(),
-      androidScheduleMode: AndroidScheduleMode.alarmClock
+    if (scheduledTime.isBefore(now)) {
+      scheduledTime = scheduledTime.add(const Duration(days: 1));
+    }
+
+    await _notifications.zonedSchedule(
+      circleId.hashCode,
+      'Alarm Circle: $circleName',
+      'Time to share your morning routine! Prompt: $prompt',
+      tz.TZDateTime.from(scheduledTime, tz.local),
+      details,
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      matchDateTimeComponents: DateTimeComponents.time,
+      payload: circleId,
     );
   }
 
@@ -117,5 +155,13 @@ class NotificationService {
         // print("Notification permission not granted");
       }
     }
+  }
+
+  Future<void> cancelAlarm(String circleId) async {
+    await _notifications.cancel(circleId.hashCode);
+  }
+
+  Future<void> cancelAllAlarms() async {
+    await _notifications.cancelAll();
   }
 }

@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../models/alarm_circle.dart';
+import '../models/circle_prompt.dart';
+import '../models/circle_post.dart';
 import '../services/user_service.dart';
 import 'dart:math';
 
@@ -140,5 +142,88 @@ class AlarmCircleService {
 
     // Update user's group status
     await _userService.leaveGroup();
+  }
+
+  // Create a new prompt for a circle
+  Future<CirclePrompt> createPrompt(String circleId, String prompt) async {
+    final user = _auth.currentUser;
+    if (user == null) throw Exception('User not authenticated');
+
+    // Verify user is a member of the circle
+    final circle = await _firestore.collection('alarmCircles').doc(circleId).get();
+    if (!circle.exists || !(circle.data()?['memberIds'] as List).contains(user.uid)) {
+      throw Exception('Not a member of this circle');
+    }
+
+    final docRef = await _firestore.collection('circlePrompts').add({
+      'circleId': circleId,
+      'prompt': prompt,
+      'date': FieldValue.serverTimestamp(),
+      'isActive': true,
+    });
+
+    final doc = await docRef.get();
+    return CirclePrompt.fromFirestore(doc);
+  }
+
+  // Get active prompts for a circle
+  Stream<List<CirclePrompt>> getCirclePrompts(String circleId) {
+    return _firestore
+        .collection('circlePrompts')
+        .where('circleId', isEqualTo: circleId)
+        .where('isActive', isEqualTo: true)
+        .orderBy('date', descending: true)
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+            .map((doc) => CirclePrompt.fromFirestore(doc))
+            .toList());
+  }
+
+  // Create a new post in a circle
+  Future<CirclePost> createPost(String circleId, String promptId, String photoUrl, {String? caption}) async {
+    final user = _auth.currentUser;
+    if (user == null) throw Exception('User not authenticated');
+
+    // Verify user is a member of the circle
+    final circle = await _firestore.collection('alarmCircles').doc(circleId).get();
+    if (!circle.exists || !(circle.data()?['memberIds'] as List).contains(user.uid)) {
+      throw Exception('Not a member of this circle');
+    }
+
+    final docRef = await _firestore.collection('circlePosts').add({
+      'circleId': circleId,
+      'userId': user.uid,
+      'photoUrl': photoUrl,
+      'promptId': promptId,
+      'createdAt': FieldValue.serverTimestamp(),
+      if (caption != null) 'caption': caption,
+    });
+
+    final doc = await docRef.get();
+    return CirclePost.fromFirestore(doc);
+  }
+
+  // Get posts for a circle
+  Stream<List<CirclePost>> getCirclePosts(String circleId) {
+    return _firestore
+        .collection('circlePosts')
+        .where('circleId', isEqualTo: circleId)
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+            .map((doc) => CirclePost.fromFirestore(doc))
+            .toList());
+  }
+
+  // Get posts for a specific prompt
+  Stream<List<CirclePost>> getPromptPosts(String promptId) {
+    return _firestore
+        .collection('circlePosts')
+        .where('promptId', isEqualTo: promptId)
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+            .map((doc) => CirclePost.fromFirestore(doc))
+            .toList());
   }
 }

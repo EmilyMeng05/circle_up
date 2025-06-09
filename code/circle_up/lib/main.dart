@@ -16,9 +16,9 @@ import 'services/notification_service.dart';
 */
 void main() async {
   // Load the .env file in order to access any of the environment variables
-  await dotenv.load(fileName: ".env"); 
+  await dotenv.load(fileName: ".env");
 
-  
+
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize Firebase with the current platform's options
@@ -28,7 +28,7 @@ void main() async {
 
   // Initialize the notification servicce
   // Request any notification permissions if required
-  await NotificationService().initNotification();
+  await NotificationService().initialize();
   await NotificationService().requestNotificationPermission();
   runApp(const MyApp());
 }

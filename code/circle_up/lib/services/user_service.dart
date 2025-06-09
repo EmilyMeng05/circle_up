@@ -198,4 +198,13 @@ class UserService {
 
     return AppUser.fromFirestore(doc);
   }
+
+  /// Get a stream of member IDs for a specific circle
+  Stream<List<String>> getCircleMembers(String circleId) {
+    return _firestore
+        .collection('alarmCircles')
+        .doc(circleId)
+        .snapshots()
+        .map((doc) => List<String>.from(doc.data()?['memberIds'] ?? []));
+  }
 }
